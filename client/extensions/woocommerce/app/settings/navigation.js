@@ -36,6 +36,11 @@ export const SettingsNavigation = ( { site, activeSection, translate } ) => {
 			path: '/store/settings/taxes/:site',
 			title: translate( 'Taxes' ),
 		},
+		{
+			id: 'development',
+			path: '/store/settings/development/:site',
+			title: translate( 'Development' ),
+		}
 	];
 
 	const section = find( items, { id: activeSection } );
