@@ -37,9 +37,9 @@ export const SettingsNavigation = ( { site, activeSection, translate } ) => {
 			title: translate( 'Taxes' ),
 		},
 		{
-			id: 'development',
-			path: '/store/settings/development/:site',
-			title: translate( 'Development' ),
+			id: 'email',
+			path: '/store/settings/email/:site',
+			title: translate( 'Email' ),
 		}
 	];
 
