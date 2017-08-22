@@ -14,6 +14,8 @@ import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
 import SettingsNavigation from '../navigation';
 import { getLink } from 'woocommerce/lib/nav-utils';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import QueryMailChimpSettings from 'woocommerce/state/sites/settings/email/querySettings';
 
 const Email = ( { isSaving, site, translate, className } ) => {
 	const breadcrumbs = [
@@ -35,6 +37,7 @@ const Email = ( { isSaving, site, translate, className } ) => {
 				</Button>
 			</ActionHeader>
 			<SettingsNavigation activeSection="email" />
+			<QueryMailChimpSettings />
 		</Main>
 	);
 };
