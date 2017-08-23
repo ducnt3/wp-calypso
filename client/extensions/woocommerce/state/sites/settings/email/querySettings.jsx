@@ -15,7 +15,7 @@ class QueryMailChimpSettings extends Component {
 	static propTypes = {
 		siteId:	PropTypes.number.isRequired,
 		isRequesting: PropTypes.bool.isRequired,
-		requestTheme: PropTypes.func.isRequired,
+		requestSettings: PropTypes.func.isRequired,
 	}
 
 	componentDidMount() {
@@ -32,7 +32,7 @@ class QueryMailChimpSettings extends Component {
 
 	request( props ) {
 		if ( ! props.isRequesting ) {
-			props.requestTheme( props.themeId, props.siteId );
+			props.requestSettings( props.siteId );
 		}
 	}
 
