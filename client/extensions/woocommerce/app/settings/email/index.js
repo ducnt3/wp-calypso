@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Main from 'components/main';
+import MailChimp from './mailchimp';
 import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
 import Card from 'components/card';
@@ -41,6 +42,7 @@ const Email = ( { isSaving, site, siteId, translate, className, settings } ) => 
 				</Button>
 			</ActionHeader>
 			<SettingsNavigation activeSection="email" />
+			<MailChimp />
 			<QueryMailChimpSettings siteId={ siteId } />
 			<Card>
 				{ settingsText }

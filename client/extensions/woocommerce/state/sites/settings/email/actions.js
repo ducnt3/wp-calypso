@@ -20,8 +20,8 @@ const mailchimpSettingsRequestSuccess = ( siteId, settings ) => ( {
 	settings
 } );
 
-const mailchimpSettingsRequestFailure = ( siteId, error ) => ( {
-	type: WOOCOMMERCE_SETTINGS_MAILCHIMP_REQUEST_SUCCESS, // WOOCOMMERCE_SETTINGS_MAILCHIMP_REQUEST_FAILURE,
+const mailchimpSettingsRequestFailure = ( siteId, { error } ) => ( {
+	type: WOOCOMMERCE_SETTINGS_MAILCHIMP_REQUEST_FAILURE,
 	siteId,
 	error
 } );

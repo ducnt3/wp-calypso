@@ -9,7 +9,29 @@ import { get } from 'lodash';
  * @return {Object} Object containing payment methods
  */
 export const isRequestingSettings = ( state, siteId ) => {
-	return false;
+	const path =
+		[ 'extensions',
+			'woocommerce',
+			'sites',
+			siteId,
+			'settings',
+			'email',
+			'settingsRequest' ];
+
+	return get( state, path, false );
+};
+
+export const requestingSettingsError = ( state, siteId ) => {
+	const path =
+		[ 'extensions',
+			'woocommerce',
+			'sites',
+			siteId,
+			'settings',
+			'email',
+			'settingsRequestError' ];
+
+	return get( state, path, false );
 };
 
 export const mailchimpSettings = ( state, siteId ) => {
@@ -19,7 +41,8 @@ export const mailchimpSettings = ( state, siteId ) => {
 			'sites',
 			siteId,
 			'settings',
-			'email' ];
+			'email',
+			'settings' ];
 
 	return get( state, path, {} );
 };

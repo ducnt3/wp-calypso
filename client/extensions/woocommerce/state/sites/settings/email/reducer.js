@@ -1,22 +1,50 @@
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import {
 	WOOCOMMERCE_SETTINGS_MAILCHIMP_REQUEST,
 	WOOCOMMERCE_SETTINGS_MAILCHIMP_REQUEST_SUCCESS,
+	WOOCOMMERCE_SETTINGS_MAILCHIMP_REQUEST_FAILURE,
 } from 'woocommerce/state/action-types';
 
-export default createReducer( null, {
-	[ WOOCOMMERCE_SETTINGS_MAILCHIMP_REQUEST_SUCCESS ]: ( state, settings ) => {
-		if ( state ) {
-			return state;
-		}
-		return settings;
-	},
+function settings( state = {}, action ) {
+	switch ( action.type ) {
+		case WOOCOMMERCE_SETTINGS_MAILCHIMP_REQUEST_SUCCESS:
+		case WOOCOMMERCE_SETTINGS_MAILCHIMP_REQUEST_FAILURE:
+			const value = WOOCOMMERCE_SETTINGS_MAILCHIMP_REQUEST_SUCCESS === action.type
+				? action.settings : false;
+			return value;
+	}
 
-	[ WOOCOMMERCE_SETTINGS_MAILCHIMP_REQUEST ]: ( state ) => {
-		return state;
-	},
+	return state;
+}
 
+function settingsRequest( state = false, { type } ) {
+	switch ( type ) {
+		case WOOCOMMERCE_SETTINGS_MAILCHIMP_REQUEST:
+		case WOOCOMMERCE_SETTINGS_MAILCHIMP_REQUEST_SUCCESS:
+		case WOOCOMMERCE_SETTINGS_MAILCHIMP_REQUEST_FAILURE:
+			return WOOCOMMERCE_SETTINGS_MAILCHIMP_REQUEST === type;
+	}
+
+	return state;
+}
+
+function settingsRequestError( state = false, action ) {
+	switch ( action.type ) {
+		case WOOCOMMERCE_SETTINGS_MAILCHIMP_REQUEST_SUCCESS:
+		case WOOCOMMERCE_SETTINGS_MAILCHIMP_REQUEST_FAILURE:
+			const error = WOOCOMMERCE_SETTINGS_MAILCHIMP_REQUEST_FAILURE === action.type
+				? action.error : false;
+			return error;
+	}
+
+	return state;
+}
+
+export default combineReducers( {
+	settings,
+	settingsRequest,
+	settingsRequestError,
 } );

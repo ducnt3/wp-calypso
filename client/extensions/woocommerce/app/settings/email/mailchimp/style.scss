@@ -1,0 +1,41 @@
+.mailchimp__getting-started-title {
+  margin: 0;
+}
+
+.mailchimp__getting-started-title-text {
+  font-size: 24px;
+  font-weight: 300;
+}
+
+.mailchimp__getting-started-subtitle-text {
+  font-size: 12px;
+  color: $gray;
+}
+
+.mailchimp__getting-started-content {
+  padding: 4;
+  width: 100%;
+  display: inline-flex;
+}
+
+.mailchimp__getting-started-list-header {
+  color: black;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.mailchimp__getting-started-list {
+  color: $gray;
+  font-size: 16px;
+  list-style: none;
+  margin: 0;
+  li {
+    margin: 6px 0;
+    .gridicon {
+      display: inline;
+      margin-right: 12px;
+      vertical-align: bottom;
+      color: $alert-green;
+    }
+  }
+}
