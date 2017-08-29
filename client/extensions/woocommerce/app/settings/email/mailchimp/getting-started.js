@@ -7,10 +7,16 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Card from 'components/card';
 import { localize } from 'i18n-calypso';
 
 class MailChimpGettingStarted extends React.Component {
+
+	onButtonClick = () => {
+		const { onClick } = this.props;
+		//onClick();
+	}
 
 	render() {
 		const { translate } = this.props;
@@ -27,7 +33,7 @@ class MailChimpGettingStarted extends React.Component {
 		const allow = translate( 'Allow customers to subscribe to your Email list' );
 		const send = translate( 'Send abandon cart emails' );
 		const create = translate( 'Create purchase-based segments for targeted campaigns' );
-
+		const gettingStarted = translate( 'Getting started with MailChimp' );
 		const list = [ allow, send, create ];
 
 		return (
@@ -50,6 +56,9 @@ class MailChimpGettingStarted extends React.Component {
 								</li>
 							) }
 						</ul>
+						<Button onClick={ this.onButtonClick }>
+							{ gettingStarted }
+						</Button>
 					</span>
 				</Card>
 			</div>
