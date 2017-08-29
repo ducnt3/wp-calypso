@@ -13,10 +13,10 @@ import { localize } from 'i18n-calypso';
 
 class MailChimpGettingStarted extends React.Component {
 
-	onButtonClick = () => {
-		const { onClick } = this.props;
+	//onButtonClick = () => {
+		//const { onClick } = this.props;
 		//onClick();
-	}
+	//}
 
 	render() {
 		const { translate } = this.props;
@@ -29,11 +29,11 @@ class MailChimpGettingStarted extends React.Component {
 				className="mailchimp__getting-started-illustration"
 			/>;
 
-		const connect = translate( 'Connect with your customers through MailChimp and:' );
+		const connect = translate( 'Connect with your customers through MailChimp' );
 		const allow = translate( 'Allow customers to subscribe to your Email list' );
 		const send = translate( 'Send abandon cart emails' );
 		const create = translate( 'Create purchase-based segments for targeted campaigns' );
-		const gettingStarted = translate( 'Getting started with MailChimp' );
+		const gettingStarted = translate( 'Get started with MailChimp' );
 		const list = [ allow, send, create ];
 
 		return (
@@ -45,9 +45,9 @@ class MailChimpGettingStarted extends React.Component {
 				<Card className="mailchimp__getting-started-content">
 					<span>{ illustration }</span>
 					<span>
-						<div className="mailchimp__getting-started-list-header">
+						<h3 className="mailchimp__getting-started-list-header">
 							{ connect }
-						</div>
+						</h3>
 						<ul className="mailchimp__getting-started-list">
 							{ list.map( ( item, key ) =>
 								<li key={ key }>
