@@ -24,8 +24,8 @@ class MailChimpGettingStarted extends React.Component {
 
 		const illustration =
 			<img
-				src={ '/calypso/images/illustrations/illustration-500.svg' }
-				width={ 300 }
+				src={ '/calypso/images/illustrations/illustration-layout.svg' }
+				width={ 220 }
 				className="mailchimp__getting-started-illustration"
 			/>;
 
@@ -56,7 +56,7 @@ class MailChimpGettingStarted extends React.Component {
 								</li>
 							) }
 						</ul>
-						<Button onClick={ this.onButtonClick }>
+						<Button className="mailchimp__getting-started-button" onClick={ this.onButtonClick }>
 							{ gettingStarted }
 						</Button>
 					</span>

@@ -13,19 +13,21 @@
 }
 
 .mailchimp__getting-started-content {
+	width: 100%;
 	@include breakpoint( ">660px" ) {
 		display: inline-flex;
 	}
 }
 
 .mailchimp__getting-started-list-header {
-	font-weight: 700;
+	font-weight: 500;
 }
 
 .mailchimp__getting-started-list {
 	color: $gray-text-min;
 	list-style: none;
 	margin: 0 0 16px 0;
+	font-size: 14px;
 	
 	li {
 		margin: 6px 0;
@@ -36,5 +38,13 @@
 			vertical-align: bottom;
 			color: $alert-green;
 		}
+	}
+}
+
+.mailchimp__getting-started-list-header,
+.mailchimp__getting-started-list,
+.mailchimp__getting-started-button {
+	@include breakpoint( ">660px" ) {
+		margin-left: 24px;
 	}
 }
