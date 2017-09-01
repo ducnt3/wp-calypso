@@ -28,7 +28,7 @@
 	list-style: none;
 	margin: 0 0 16px 0;
 	font-size: 14px;
-	
+
 	li {
 		margin: 6px 0;
 
@@ -39,6 +39,12 @@
 			color: $alert-green;
 		}
 	}
+}
+
+
+.mailchimp__loading {
+	background-color: lighten( $gray, 30% );
+	animation: loading-fade 1.6s ease-in-out infinite;
 }
 
 .mailchimp__getting-started-list-header,

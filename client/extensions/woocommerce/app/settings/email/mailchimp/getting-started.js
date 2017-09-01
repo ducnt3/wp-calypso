@@ -13,10 +13,10 @@ import { localize } from 'i18n-calypso';
 
 class MailChimpGettingStarted extends React.Component {
 
-	//onButtonClick = () => {
-		//const { onClick } = this.props;
-		//onClick();
-	//}
+	onButtonClick = () => {
+		const { onClick } = this.props;
+		onClick();
+	}
 
 	render() {
 		const { translate } = this.props;

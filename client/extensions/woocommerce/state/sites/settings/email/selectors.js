@@ -44,5 +44,5 @@ export const mailchimpSettings = ( state, siteId ) => {
 			'email',
 			'settings' ];
 
-	return get( state, path, {} );
+	return get( state, path, null );
 };
