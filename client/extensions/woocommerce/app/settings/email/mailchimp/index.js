@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { filter, matches } from 'lodash';
+import { filter, matches, includes } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -35,12 +35,12 @@ class MailChimp extends React.Component {
 	}
 
 	startWizard = () => {
-		this.setState( { setupWizardStarted: true } )
+		this.setState( { setupWizardStarted: true } );
 		console.log( 'start wizard' );
 	}
 
 	closeWizard = () => {
-		this.setState( { setupWizardStarted: true } );
+		this.setState( { setupWizardStarted: false } );
 		console.log( 'close wizard' );
 	}
 
@@ -53,10 +53,13 @@ class MailChimp extends React.Component {
 			<div className={ className }>
 				<QueryJetpackPlugins siteIds={ [ siteId ] } />
 				<QueryMailChimpSettings siteId={ siteId } />
-				{ ( activeTab === 'api_key' ) && <MailChimpGettingStarted
+				{ ( includes( [ 'api_key' ], activeTab ) ) && <MailChimpGettingStarted
 						isPlaceholder={ isRequestingMailChimpSettings }
 						onClick={ this.startWizard } /> }
-				{ setupWizardStarted && <MailChimpSetup onClose={ this.closeWizard } /> }
+				{ setupWizardStarted && <MailChimpSetup
+					siteId={ this.props.siteId }
+					activeTab={ this.state.activeTab }
+					onClose={ this.closeWizard } /> }
 				<Card>
 					{ 'Version: ' + this.props.version + ' ' + JSON.stringify( this.props.settings ) }
 				</Card>
