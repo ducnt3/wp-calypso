@@ -20,6 +20,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
 import { submitMailChimpApiKey } from 'woocommerce/state/sites/settings/email/actions.js';
+import { isSubbmittingApiKey, isApiKeyCorrect } from 'woocommerce/state/sites/settings/email/selectors';
 
 const LOG_INTO_MAILCHIMP_STEP = 'log_into';
 const KEY_INPUT_STEP = 'key_input';
@@ -39,18 +40,19 @@ const LogIntoMailchimp = localize( ( { translate } ) => (
 	</Button>
 ) );
 
-const KeyInputStep = localize( ( { translate, onChange } ) => (
+const KeyInputStep = localize( ( { translate, onChange, apiKey, isKeyCorrect } ) => (
 	<FormFieldset className="mailchimp__setup-mailchimp-key-input">
 		<FormLabel required={ true }>
 			{ translate( 'Mailchimp API Key:' ) }
 		</FormLabel>
 		<FormTextInput
 			name={ translate( 'Mailchimp API Key:' ) }
-			isError={ false }
+			isError={ ! isKeyCorrect }
 			placeholder={ 'Enter your MailChimp API key' }
 			onChange={ onChange }
+			value={ apiKey }
 		/>
-		{ false && <FormInputValidation isError text="This field is required." /> }
+		{ ! isKeyCorrect && <FormInputValidation isError text="Key appears to be invalid" /> }
 		<div>
 			<span>{ translate( 'To find your Mailchimp API key, go to ' ) }</span>
 			<span>{ translate( 'settting > Extras > API keys' ) }</span>
@@ -66,7 +68,7 @@ class MailChimpSetup extends React.Component {
 		// make this react to the real phase the execution is.
 		this.state = {
 			step: LOG_INTO_MAILCHIMP_STEP,
-			api_key_input: ''
+			api_key_input: this.props.settings.mailchimp_api_key
 		};
 	}
 
@@ -92,7 +94,10 @@ class MailChimpSetup extends React.Component {
 			return <LogIntoMailchimp />;
 		}
 		if ( step === KEY_INPUT_STEP ) {
-			return <KeyInputStep onChange={ this.onKeyInputChange } />;
+			return <KeyInputStep
+				onChange={ this.onKeyInputChange }
+				apiKey={ this.state.api_key_input }
+				isKeyCorrect={ this.props.isKeyCorrect } />;
 		}
 
 		return <div></div>;
@@ -100,9 +105,10 @@ class MailChimpSetup extends React.Component {
 
 	render() {
 		const { translate } = this.props;
+		const isButtonBusy = this.props.isBusy ? 'is-busy' : '';
 		const buttons = [
 			{ action: 'cancel', label: translate( 'Cancel' ) },
-			{ action: 'next', label: translate( 'Next' ), onClick: this.next, isPrimary: true },
+			{ action: 'next', label: translate( 'Next' ), onClick: this.next, isPrimary: true, additionalClassNames: isButtonBusy },
 		];
 
 		console.log( this.state.api_key_input );
@@ -121,7 +127,15 @@ class MailChimpSetup extends React.Component {
 }
 
 export default localize( connect(
-	null,
+	( state, props ) => {
+		const subbmittingApiKey = isSubbmittingApiKey( state, props.siteId );
+		const isKeyCorrect = isApiKeyCorrect( state, props.siteId );
+		const isBusy = subbmittingApiKey;
+		return {
+			isBusy,
+			isKeyCorrect
+		};
+	},
 	{
 		submitMailChimpApiKey
 	}

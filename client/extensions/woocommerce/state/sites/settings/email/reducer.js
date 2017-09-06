@@ -6,15 +6,17 @@ import {
 	WOOCOMMERCE_SETTINGS_MAILCHIMP_REQUEST,
 	WOOCOMMERCE_SETTINGS_MAILCHIMP_REQUEST_SUCCESS,
 	WOOCOMMERCE_SETTINGS_MAILCHIMP_REQUEST_FAILURE,
+	WOOCOMMERCE_SETTINGS_MAILCHIMP_API_KEY_SUBMIT,
+	WOOCOMMERCE_SETTINGS_MAILCHIMP_API_KEY_SUBMIT_SUCCESS,
+	WOOCOMMERCE_SETTINGS_MAILCHIMP_API_KEY_SUBMIT_FAILURE,
 } from 'woocommerce/state/action-types';
 
 function settings( state = {}, action ) {
 	switch ( action.type ) {
 		case WOOCOMMERCE_SETTINGS_MAILCHIMP_REQUEST_SUCCESS:
 		case WOOCOMMERCE_SETTINGS_MAILCHIMP_REQUEST_FAILURE:
-			const value = WOOCOMMERCE_SETTINGS_MAILCHIMP_REQUEST_SUCCESS === action.type
-				? action.settings : false;
-			return value;
+		case WOOCOMMERCE_SETTINGS_MAILCHIMP_API_KEY_SUBMIT_SUCCESS:
+			return Object.assign( {}, state, action.settings );
 	}
 
 	return state;
@@ -43,8 +45,43 @@ function settingsRequestError( state = false, action ) {
 	return state;
 }
 
+function apiKeySubmit( state = false, { type } ) {
+	switch ( type ) {
+		case WOOCOMMERCE_SETTINGS_MAILCHIMP_API_KEY_SUBMIT:
+		case WOOCOMMERCE_SETTINGS_MAILCHIMP_API_KEY_SUBMIT_SUCCESS:
+		case WOOCOMMERCE_SETTINGS_MAILCHIMP_API_KEY_SUBMIT_FAILURE:
+			return WOOCOMMERCE_SETTINGS_MAILCHIMP_API_KEY_SUBMIT === type;
+	}
+
+	return state;
+}
+
+function apiKeyCorrect( state = true, action ) {
+	switch ( action.type ) {
+		case WOOCOMMERCE_SETTINGS_MAILCHIMP_API_KEY_SUBMIT_SUCCESS:
+			return !! action.settings.mailchimp_account_info_id;
+	}
+
+	return state;
+}
+
+function apiKeySubbmitError( state = false, action ) {
+	switch ( action.type ) {
+		case WOOCOMMERCE_SETTINGS_MAILCHIMP_API_KEY_SUBMIT_SUCCESS:
+		case WOOCOMMERCE_SETTINGS_MAILCHIMP_API_KEY_SUBMIT_FAILURE:
+			const error = WOOCOMMERCE_SETTINGS_MAILCHIMP_API_KEY_SUBMIT_FAILURE === action.type
+				? action.error : false;
+			return error;
+	}
+
+	return state;
+}
+
 export default combineReducers( {
 	settings,
 	settingsRequest,
 	settingsRequestError,
+	apiKeySubmit,
+	apiKeySubbmitError,
+	apiKeyCorrect,
 } );

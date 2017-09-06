@@ -53,10 +53,13 @@ class MailChimp extends React.Component {
 			<div className={ className }>
 				<QueryJetpackPlugins siteIds={ [ siteId ] } />
 				<QueryMailChimpSettings siteId={ siteId } />
-				{ ( includes( [ 'api_key' ], activeTab ) ) && <MailChimpGettingStarted
+				{ ( includes( [ 'api_key' ], activeTab ) ) &&
+					<MailChimpGettingStarted
+						siteId={ siteId }
 						isPlaceholder={ isRequestingMailChimpSettings }
 						onClick={ this.startWizard } /> }
 				{ setupWizardStarted && <MailChimpSetup
+					settings={ this.props.settings }
 					siteId={ this.props.siteId }
 					activeTab={ this.state.activeTab }
 					onClose={ this.closeWizard } /> }

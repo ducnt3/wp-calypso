@@ -46,3 +46,29 @@ export const mailchimpSettings = ( state, siteId ) => {
 
 	return get( state, path, null );
 };
+
+export const isSubbmittingApiKey = ( state, siteId ) => {
+	const path =
+		[ 'extensions',
+			'woocommerce',
+			'sites',
+			siteId,
+			'settings',
+			'email',
+			'apiKeySubmit' ];
+
+	return get( state, path, false );
+};
+
+export const isApiKeyCorrect = ( state, siteId ) => {
+	const path =
+		[ 'extensions',
+			'woocommerce',
+			'sites',
+			siteId,
+			'settings',
+			'email',
+			'apiKeyCorrect' ];
+
+	return get( state, path, true );
+};
