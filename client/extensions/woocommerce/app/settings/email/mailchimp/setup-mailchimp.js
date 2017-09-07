@@ -21,6 +21,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
 import { submitMailChimpApiKey } from 'woocommerce/state/sites/settings/email/actions.js';
 import { isSubbmittingApiKey, isApiKeyCorrect } from 'woocommerce/state/sites/settings/email/selectors';
+import StoreInfoStep from './setup-steps/store-info.js';
 
 const LOG_INTO_MAILCHIMP_STEP = 'log_into';
 const KEY_INPUT_STEP = 'key_input';
@@ -31,7 +32,7 @@ const NEWSLETTER_SETTINGS_STEP = 'newsletter_settings';
 const steps = {
 	[ LOG_INTO_MAILCHIMP_STEP ]: { number: 0, nextStep: KEY_INPUT_STEP },
 	[ KEY_INPUT_STEP ]: { number: 1, nextStep: STORE_INFO_STEP },
-	[ STORE_INFO_STEP ]: { number: 1, nextStep: CAMPAIGN_DEFAULTS_STEP },
+	[ STORE_INFO_STEP ]: { number: 2, nextStep: CAMPAIGN_DEFAULTS_STEP },
 };
 
 const LogIntoMailchimp = localize( ( { translate } ) => (
@@ -46,7 +47,7 @@ const KeyInputStep = localize( ( { translate, onChange, apiKey, isKeyCorrect } )
 			{ translate( 'Mailchimp API Key:' ) }
 		</FormLabel>
 		<FormTextInput
-			name={ translate( 'Mailchimp API Key:' ) }
+			name={ 'api_key' }
 			isError={ ! isKeyCorrect }
 			placeholder={ 'Enter your MailChimp API key' }
 			onChange={ onChange }
@@ -72,6 +73,13 @@ class MailChimpSetup extends React.Component {
 		};
 	}
 
+	componentWillReceiveProps( nextProps ) {
+		if ( ( nextProps.settings.active_tab === STORE_INFO_STEP ) &&
+			( this.state.step === KEY_INPUT_STEP ) ) {
+			this.setState( { step: STORE_INFO_STEP } );
+		}
+	}
+
 	onClose = () => {
 		this.props.onClose();
 	}
@@ -88,6 +96,10 @@ class MailChimpSetup extends React.Component {
 		this.setState( { api_key_input: e.target.value } );
 	}
 
+	onStoreInfoChange = ( e ) => {
+		console.log( 'store info change ' + e.target.name + ' ' + e.target.value );
+	}
+
 	renderStep = () => {
 		const { step } = this.state;
 		if ( step === LOG_INTO_MAILCHIMP_STEP ) {
@@ -98,6 +110,13 @@ class MailChimpSetup extends React.Component {
 				onChange={ this.onKeyInputChange }
 				apiKey={ this.state.api_key_input }
 				isKeyCorrect={ this.props.isKeyCorrect } />;
+		}
+		if ( step === STORE_INFO_STEP ) {
+			return <StoreInfoStep
+				onChange={ this.onStoreInfoChange }
+				storeData={ {} }
+				validateFields={ false }
+			/>;
 		}
 
 		return <div></div>;
