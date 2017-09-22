@@ -10,6 +10,9 @@ import {
 	WOOCOMMERCE_SETTINGS_MAILCHIMP_API_KEY_SUBMIT,
 	WOOCOMMERCE_SETTINGS_MAILCHIMP_API_KEY_SUBMIT_SUCCESS,
 	WOOCOMMERCE_SETTINGS_MAILCHIMP_API_KEY_SUBMIT_FAILURE,
+	WOOCOMMERCE_SETTINGS_MAILCHIMP_STORE_INFO_SUBMIT,
+	WOOCOMMERCE_SETTINGS_MAILCHIMP_STORE_INFO_SUBMIT_SUCCESS,
+	WOOCOMMERCE_SETTINGS_MAILCHIMP_STORE_INFO_SUBMIT_FAILURE,
 } from 'woocommerce/state/action-types';
 
 const mailchimpSettingsRequest = ( siteId ) => ( {
@@ -42,6 +45,23 @@ const mailchimpApiKeySubmitSuccess = ( siteId, settings ) => ( {
 
 const mailchimpApiKeySubmitFailure = ( siteId, { error } ) => ( {
 	type: WOOCOMMERCE_SETTINGS_MAILCHIMP_API_KEY_SUBMIT_FAILURE,
+	siteId,
+	error
+} );
+
+const mailchimpStoreInfoSubmit = ( siteId ) => ( {
+	type: WOOCOMMERCE_SETTINGS_MAILCHIMP_STORE_INFO_SUBMIT,
+	siteId
+} );
+
+const mailchimpStoreInfoSubmitSuccess = ( siteId, settings ) => ( {
+	type: WOOCOMMERCE_SETTINGS_MAILCHIMP_STORE_INFO_SUBMIT_SUCCESS,
+	siteId,
+	settings
+} );
+
+const mailchimpStoreInfoSubbmitFailure = ( siteId, { error } ) => ( {
+	type: WOOCOMMERCE_SETTINGS_MAILCHIMP_STORE_INFO_SUBMIT_FAILURE,
 	siteId,
 	error
 } );
@@ -81,5 +101,26 @@ export const submitMailChimpApiKey = ( siteId, apiKey ) => ( dispatch, getState 
 			console.log( 'error' );
 			console.log( error );
 			dispatch( mailchimpApiKeySubmitFailure( siteId, error ) );
+		} );
+};
+
+export const submitMailchimpStoreInfo = ( siteId, storeInfo ) => ( dispatch, getState ) => {
+	const state = getState();
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
+
+	dispatch( mailchimpStoreInfoSubmit( siteId ) );
+
+	return request( siteId ).put( 'mailchimp/store_info', storeInfo )
+		.then( settings => {
+			console.log( 'success' );
+			console.log( settings );
+			dispatch( mailchimpStoreInfoSubmitSuccess( siteId, settings ) );
+		} )
+		.catch( error => {
+			console.log( 'error' );
+			console.log( error );
+			dispatch( mailchimpStoreInfoSubbmitFailure( siteId, error ) );
 		} );
 };
