@@ -23,6 +23,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import { submitMailChimpApiKey, submitMailchimpStoreInfo } from 'woocommerce/state/sites/settings/email/actions.js';
 import { isSubbmittingApiKey, isApiKeyCorrect } from 'woocommerce/state/sites/settings/email/selectors';
 import StoreInfoStep from './setup-steps/store-info.js';
+import CampaignDefaultsStep from './setup-steps/campaign-defaults.js';
 import {
 	getStoreLocation,
 } from 'woocommerce/state/sites/settings/general/selectors';
@@ -37,6 +38,7 @@ const steps = {
 	[ LOG_INTO_MAILCHIMP_STEP ]: { number: 0, nextStep: KEY_INPUT_STEP },
 	[ KEY_INPUT_STEP ]: { number: 1, nextStep: STORE_INFO_STEP },
 	[ STORE_INFO_STEP ]: { number: 2, nextStep: CAMPAIGN_DEFAULTS_STEP },
+	[ CAMPAIGN_DEFAULTS_STEP ]: { number: 3, nextStep: NEWSLETTER_SETTINGS_STEP },
 };
 
 const LogIntoMailchimp = localize( ( { translate } ) => (
@@ -45,6 +47,7 @@ const LogIntoMailchimp = localize( ( { translate } ) => (
 	</Button>
 ) );
 
+//get this to its own component
 const KeyInputStep = localize( ( { translate, onChange, apiKey, isKeyCorrect } ) => (
 	<FormFieldset className="mailchimp__setup-mailchimp-key-input">
 		<FormLabel required={ true }>
@@ -88,6 +91,10 @@ class MailChimpSetup extends React.Component {
 			( this.state.step === KEY_INPUT_STEP ) ) {
 			this.setState( { step: STORE_INFO_STEP } );
 		}
+		if ( ( nextProps.settings.active_tab === CAMPAIGN_DEFAULTS_STEP ) &&
+			( this.state.step === STORE_INFO_STEP ) ) {
+			this.setState( { step: CAMPAIGN_DEFAULTS_STEP } );
+		}
 	}
 
 	onClose = () => {
@@ -108,12 +115,16 @@ class MailChimpSetup extends React.Component {
 		return settings;
 	}
 
+	hasEmptyValues = ( data ) => {
+		return some( data, isEmpty );
+	}
+
 	areStoreSettingsValid = ( settings ) => {
 		const hasAllKeys = storSettingsRequriredFields.every( key => key in settings );
 		if ( ! hasAllKeys ) {
 			return false;
 		}
-		const hasEmptyValues = some( settings, isEmpty );
+		const hasEmptyValues = this.hasEmptyValues( settings );
 		if ( hasEmptyValues ) {
 			return false;
 		}
@@ -125,6 +136,8 @@ class MailChimpSetup extends React.Component {
 	}
 
 	next = () => {
+		// Don't send data if it is not compleate or it is the same as the one we already had from
+		// the endpoint.
 		if ( this.state.step === KEY_INPUT_STEP ) {
 			this.props.submitMailChimpApiKey( this.props.siteId, this.state.api_key_input );
 			return;
@@ -172,6 +185,13 @@ class MailChimpSetup extends React.Component {
 				validateFields={ false }
 			/>;
 		}
+		if ( step === CAMPAIGN_DEFAULTS_STEP ) {
+			return <CampaignDefaultsStep
+				onChange={ this.onStoreInfoChange }
+				storeData={ this.state.settings }
+				validateFields={ false }
+			/>;
+		}
 
 		return <div></div>;
 	}
@@ -192,7 +212,7 @@ class MailChimpSetup extends React.Component {
 				onClose={ this.onClose }>
 				<ProgressIndicator
 					stepNumber={ steps[ this.state.step ].number }
-					totalSteps={ 3 } />
+					totalSteps={ 4 } />
 				{ this.renderStep() }
 			</Dialog>
 		);

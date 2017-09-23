@@ -9,6 +9,9 @@ import {
 	WOOCOMMERCE_SETTINGS_MAILCHIMP_API_KEY_SUBMIT,
 	WOOCOMMERCE_SETTINGS_MAILCHIMP_API_KEY_SUBMIT_SUCCESS,
 	WOOCOMMERCE_SETTINGS_MAILCHIMP_API_KEY_SUBMIT_FAILURE,
+	WOOCOMMERCE_SETTINGS_MAILCHIMP_STORE_INFO_SUBMIT,
+	WOOCOMMERCE_SETTINGS_MAILCHIMP_STORE_INFO_SUBMIT_SUCCESS,
+	WOOCOMMERCE_SETTINGS_MAILCHIMP_STORE_INFO_SUBMIT_FAILURE
 } from 'woocommerce/state/action-types';
 
 function settings( state = {}, action ) {
@@ -16,6 +19,7 @@ function settings( state = {}, action ) {
 		case WOOCOMMERCE_SETTINGS_MAILCHIMP_REQUEST_SUCCESS:
 		case WOOCOMMERCE_SETTINGS_MAILCHIMP_REQUEST_FAILURE:
 		case WOOCOMMERCE_SETTINGS_MAILCHIMP_API_KEY_SUBMIT_SUCCESS:
+		case WOOCOMMERCE_SETTINGS_MAILCHIMP_STORE_INFO_SUBMIT_SUCCESS:
 			return Object.assign( {}, state, action.settings );
 	}
 
@@ -77,6 +81,29 @@ function apiKeySubbmitError( state = false, action ) {
 	return state;
 }
 
+function storeInfoSubmit( state = false, { type } ) {
+	switch ( type ) {
+		case WOOCOMMERCE_SETTINGS_MAILCHIMP_STORE_INFO_SUBMIT:
+		case WOOCOMMERCE_SETTINGS_MAILCHIMP_STORE_INFO_SUBMIT_SUCCESS:
+		case WOOCOMMERCE_SETTINGS_MAILCHIMP_STORE_INFO_SUBMIT_FAILURE:
+			return WOOCOMMERCE_SETTINGS_MAILCHIMP_STORE_INFO_SUBMIT === type;
+	}
+
+	return state;
+}
+
+function storeInfoSubmitError( state = false, action ) {
+	switch ( action.type ) {
+		case WOOCOMMERCE_SETTINGS_MAILCHIMP_STORE_INFO_SUBMIT_SUCCESS:
+		case WOOCOMMERCE_SETTINGS_MAILCHIMP_STORE_INFO_SUBMIT_FAILURE:
+			const error = WOOCOMMERCE_SETTINGS_MAILCHIMP_STORE_INFO_SUBMIT_FAILURE === action.type
+				? action.error : false;
+			return error;
+	}
+
+	return state;
+}
+
 export default combineReducers( {
 	settings,
 	settingsRequest,
@@ -84,4 +111,6 @@ export default combineReducers( {
 	apiKeySubmit,
 	apiKeySubbmitError,
 	apiKeyCorrect,
+	storeInfoSubmit,
+	storeInfoSubmitError
 } );

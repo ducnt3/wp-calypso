@@ -23,6 +23,7 @@ const fields = [
 export default ( { storeData, onChange, validateFields } ) => {
 	return (
 		<FormFieldset className="setup-steps__store-info-field">
+			<div>Make sure that store informatin is correct. Every field is required</div>
 			<SettingsPaymentsLocationCurrency />
 			{ fields.map( ( item, index ) => (
 				<div key={ index }>
@@ -31,7 +32,7 @@ export default ( { storeData, onChange, validateFields } ) => {
 					</FormLabel>
 					<FormTextInput
 						name={ item.name }
-						isError={ validateFields && ! storeData.store_name }
+						isError={ validateFields && ! storeData[ item.name ] }
 						onChange={ onChange }
 						value={ storeData[ item.name ] }
 					/>
