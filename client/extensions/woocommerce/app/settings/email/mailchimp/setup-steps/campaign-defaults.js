@@ -16,12 +16,11 @@ import { translate } from 'i18n-calypso';
 
 export default ( { storeData, onChange, validateFields } ) => {
 	const fields = [
-		{ name: 'campaign_from_name', label: translate( 'From' ), defaultValue: storeData.store_name },
-		{ name: 'campaign_from_email', label: translate( 'From Email' ), defaultValue: storeData.admin_email },
-		{ name: 'campaign_subject', label: translate( 'Subject' ), defaultValue: storeData.store_name },
-		{ name: 'campaign_language', label: translate( 'Language' ), defaultValue: storeData.store_locale },
-		{ name: 'campaign_permission_reminder', label: translate( 'Permission reminder' ),
-			defaultValue: translate( 'You were subscribed to the newsletter from ' ) + storeData.store_name },
+		{ name: 'campaign_from_name', label: translate( 'From' ) },
+		{ name: 'campaign_from_email', label: translate( 'From Email' ) },
+		{ name: 'campaign_subject', label: translate( 'Subject' ) },
+		{ name: 'campaign_language', label: translate( 'Language' ) },
+		{ name: 'campaign_permission_reminder', label: translate( 'Permission reminder' ) },
 	];
 
 	return (
@@ -35,11 +34,11 @@ export default ( { storeData, onChange, validateFields } ) => {
 						</FormLabel>
 						<FormTextInput
 							name={ item.name }
-							isError={ validateFields && ! storeData.store_name }
+							isError={ validateFields && ! storeData[ item.name ] }
 							onChange={ onChange }
-							value={ storeData[ item.name ] ? storeData[ item.name ] : item.defaultValue }
+							value={ storeData[ item.name ] }
 						/>
-						{ ( validateFields && ! storeData.store_name ) && <FormInputValidation iserror text="field is required" /> }
+						{ ( validateFields && ! storeData[ item.name ] ) && <FormInputValidation iserror text="field is required" /> }
 					</div>
 				) ) }
 			</FormFieldset>

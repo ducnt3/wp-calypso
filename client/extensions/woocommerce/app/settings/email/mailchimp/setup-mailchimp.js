@@ -20,10 +20,15 @@ import FormRadio from 'components/forms/form-radio';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
-import { submitMailChimpApiKey, submitMailchimpStoreInfo } from 'woocommerce/state/sites/settings/email/actions.js';
+import {
+	submitMailChimpApiKey,
+	submitMailchimpStoreInfo,
+	submitMailchimpCampaignDefaults
+} from 'woocommerce/state/sites/settings/email/actions.js';
 import { isSubbmittingApiKey, isApiKeyCorrect } from 'woocommerce/state/sites/settings/email/selectors';
 import StoreInfoStep from './setup-steps/store-info.js';
 import CampaignDefaultsStep from './setup-steps/campaign-defaults.js';
+import NewsletterSettings from './setup-steps/newsletter-settings.js';
 import {
 	getStoreLocation,
 } from 'woocommerce/state/sites/settings/general/selectors';
@@ -33,12 +38,14 @@ const KEY_INPUT_STEP = 'key_input';
 const STORE_INFO_STEP = 'store_info';
 const CAMPAIGN_DEFAULTS_STEP = 'campaign_defaults';
 const NEWSLETTER_SETTINGS_STEP = 'newsletter_settings';
+const STORE_SYNC = 'store_sync';
 
 const steps = {
 	[ LOG_INTO_MAILCHIMP_STEP ]: { number: 0, nextStep: KEY_INPUT_STEP },
 	[ KEY_INPUT_STEP ]: { number: 1, nextStep: STORE_INFO_STEP },
 	[ STORE_INFO_STEP ]: { number: 2, nextStep: CAMPAIGN_DEFAULTS_STEP },
 	[ CAMPAIGN_DEFAULTS_STEP ]: { number: 3, nextStep: NEWSLETTER_SETTINGS_STEP },
+	[ NEWSLETTER_SETTINGS_STEP ]: { number: 4, nextStep: STORE_SYNC }
 };
 
 const LogIntoMailchimp = localize( ( { translate } ) => (
@@ -73,6 +80,9 @@ const storSettingsRequriredFields = [ 'store_name', 'store_street', 'store_city'
 	'store_postal_code', 'store_country', 'store_phone', 'store_locale', 'store_timezone',
 	'store_currency_code', 'admin_email' ];
 
+const campaignDefaultsRequiredFields = [ 'campaign_from_name', 'campaign_from_email', 'campaign_subject',
+		'campaign_language', 'campaign_permission_reminder' ];
+
 class MailChimpSetup extends React.Component {
 
 	constructor( props ) {
@@ -80,7 +90,7 @@ class MailChimpSetup extends React.Component {
 		// make this react to the real phase the execution is.
 		this.state = {
 			step: LOG_INTO_MAILCHIMP_STEP,
-			settings: this.props.settings,
+			settings: this.prepareDefaultValues( this.props.settings ),
 			settings_values_missing: false,
 			api_key_input: this.props.settings.mailchimp_api_key
 		};
@@ -90,18 +100,31 @@ class MailChimpSetup extends React.Component {
 		if ( ( nextProps.settings.active_tab === STORE_INFO_STEP ) &&
 			( this.state.step === KEY_INPUT_STEP ) ) {
 			this.setState( { step: STORE_INFO_STEP } );
-		}
-		if ( ( nextProps.settings.active_tab === CAMPAIGN_DEFAULTS_STEP ) &&
+		} else if ( ( nextProps.settings.active_tab === CAMPAIGN_DEFAULTS_STEP ) &&
 			( this.state.step === STORE_INFO_STEP ) ) {
 			this.setState( { step: CAMPAIGN_DEFAULTS_STEP } );
+		} else if ( ( nextProps.settings.active_tab === NEWSLETTER_SETTINGS_STEP ) &&
+			( this.state.step === CAMPAIGN_DEFAULTS_STEP ) ) {
+			this.setState( { step: NEWSLETTER_SETTINGS_STEP } );
 		}
+	}
+
+	prepareDefaultValues( settings ) {
+		const newSettings = Object.assign( {}, settings );
+		newSettings.campaign_from_name = settings.campaign_from_name || settings.store_name || '';
+		newSettings.campaign_from_email = settings.campaign_from_email || settings.admin_email || '';
+		newSettings.campaign_subject = settings.campaign_subject || settings.store_name || '';
+		newSettings.campaign_language = settings.campaign_language || settings.store_locale || '';
+		newSettings.campaign_permission_reminder = settings.campaign_permission_reminder ||
+			'You were subscribed to the newsletter from ' + settings.store_name;
+		return newSettings;
 	}
 
 	onClose = () => {
 		this.props.onClose();
 	}
 
-	getStoreSettings= () => {
+	getStoreSettings = () => {
 		// clear this and pass only what is required.
 		const { address } = this.props;
 
@@ -113,6 +136,10 @@ class MailChimpSetup extends React.Component {
 		settings.store_postal_code = address.postcode;
 		console.log( this.props.address );
 		return settings;
+	}
+
+	getCampaingDefaultsSettings = () => {
+		return pick( this.state.settings, campaignDefaultsRequiredFields );
 	}
 
 	hasEmptyValues = ( data ) => {
@@ -135,6 +162,14 @@ class MailChimpSetup extends React.Component {
 		return true;
 	}
 
+	areCampaignSettingsValid = ( settings ) => {
+		const hasAllKeys = campaignDefaultsRequiredFields.every( key => key in settings );
+		if ( ! hasAllKeys ) {
+			return false;
+		}
+		return true;
+	}
+
 	next = () => {
 		// Don't send data if it is not compleate or it is the same as the one we already had from
 		// the endpoint.
@@ -152,6 +187,16 @@ class MailChimpSetup extends React.Component {
 			this.setState( { settings_values_missing: false } );
 
 			this.props.submitMailchimpStoreInfo( this.props.siteId, settings );
+			return;
+		} else if ( this.state.step === CAMPAIGN_DEFAULTS_STEP ) {
+			const settings = this.getCampaingDefaultsSettings();
+			const validSettings = this.areCampaignSettingsValid( settings );
+			if ( ! validSettings ) {
+				this.setState( { settings_values_missing: true } );
+				return;
+			}
+			this.setState( { settings_values_missing: false } );
+			this.props.submitMailchimpCampaignDefaults( this.props.siteId, settings );
 			return;
 		}
 		this.setState( { step: steps[ this.state.step ].nextStep } );
@@ -234,5 +279,6 @@ export default localize( connect(
 	{
 		submitMailChimpApiKey,
 		submitMailchimpStoreInfo,
+		submitMailchimpCampaignDefaults
 	}
 )( MailChimpSetup ) );

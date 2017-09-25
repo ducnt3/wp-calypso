@@ -36,7 +36,7 @@ export default ( { storeData, onChange, validateFields } ) => {
 						onChange={ onChange }
 						value={ storeData[ item.name ] }
 					/>
-					{ ( validateFields && ! storeData[ item.name ] ) && <FormInputValidation iserror text="field is required" /> }
+					{ ( validateFields && ! storeData.store_name ) && <FormInputValidation iserror text="field is required" /> }
 				</div>
 			) ) }
 		</FormFieldset>
