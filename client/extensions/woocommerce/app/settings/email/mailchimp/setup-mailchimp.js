@@ -237,7 +237,13 @@ class MailChimpSetup extends React.Component {
 				validateFields={ false }
 			/>;
 		}
-
+		if ( step === NEWSLETTER_SETTINGS_STEP ) {
+			return <NewsletterSettings
+				onChange={ this.onStoreInfoChange }
+				storeData={ this.state.settings }
+				validateFields={ false }
+			/>;
+		}
 		return <div></div>;
 	}
 

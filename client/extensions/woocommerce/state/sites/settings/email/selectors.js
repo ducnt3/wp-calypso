@@ -72,3 +72,16 @@ export const isApiKeyCorrect = ( state, siteId ) => {
 
 	return get( state, path, true );
 };
+
+export const isRequestingLists = ( state, siteId ) => {
+	const path =
+		[ 'extensions',
+			'woocommerce',
+			'sites',
+			siteId,
+			'settings',
+			'email',
+			'listsRequest' ];
+
+	return get( state, path, false );
+}

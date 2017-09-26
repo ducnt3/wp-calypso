@@ -3,12 +3,16 @@
  */
 import { combineReducers } from 'state/utils';
 import {
+	WOOCOMMERCE_MAILCHIMP_CAMPAIGN_DEFAULTS_SUBMIT_SUCCESS,
 	WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST,
 	WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_SUCCESS,
 	WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_FAILURE,
 	WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT,
 	WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_SUCCESS,
 	WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_FAILURE,
+	WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST,
+	WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_SUCCESS,
+	WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_FAILURE,
 	WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT,
 	WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT_SUCCESS,
 	WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT_FAILURE
@@ -20,7 +24,10 @@ function settings( state = {}, action ) {
 		case WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_FAILURE:
 		case WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT_SUCCESS:
+		case WOOCOMMERCE_MAILCHIMP_CAMPAIGN_DEFAULTS_SUBMIT_SUCCESS:
 			return Object.assign( {}, state, action.settings );
+		case WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_SUCCESS:
+			return Object.assign( {}, state, { mailchimp_lists: action.lists } );
 	}
 
 	return state;
@@ -104,6 +111,29 @@ function storeInfoSubmitError( state = false, action ) {
 	return state;
 }
 
+function listsRequest( state = false, { type } ) {
+	switch ( type ) {
+		case WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST:
+		case WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_SUCCESS:
+		case WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_FAILURE:
+			return WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST === type;
+	}
+
+	return state;
+}
+
+function listsRequestError( state = false, action ) {
+	switch ( action.type ) {
+		case WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_SUCCESS:
+		case WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_FAILURE:
+			const error = WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_FAILURE === action.type
+				? action.error : false;
+			return error;
+	}
+
+	return state;
+}
+
 export default combineReducers( {
 	settings,
 	settingsRequest,
@@ -112,5 +142,7 @@ export default combineReducers( {
 	apiKeySubbmitError,
 	apiKeyCorrect,
 	storeInfoSubmit,
-	storeInfoSubmitError
+	storeInfoSubmitError,
+	listsRequest,
+	listsRequestError
 } );

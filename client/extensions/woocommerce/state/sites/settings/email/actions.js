@@ -7,6 +7,9 @@ import {
 	WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST,
 	WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_SUCCESS,
 	WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_FAILURE,
+	WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST,
+	WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_SUCCESS,
+	WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_FAILURE,
 	WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT,
 	WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_SUCCESS,
 	WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_FAILURE,
@@ -74,14 +77,31 @@ const mailchimpCampaignDefaultsSubmit = ( siteId ) => ( {
 	siteId
 } );
 
-const mailchimpCampaignDefaultsSubmitSuccess = ( siteId, status ) => ( {
+const mailchimpCampaignDefaultsSubmitSuccess = ( siteId, settings ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_CAMPAIGN_DEFAULTS_SUBMIT_SUCCESS,
 	siteId,
-	status
+	settings
 } );
 
 const mailchimpCampaignDefaultsSubmitFailure = ( siteId, { error } ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_CAMPAIGN_DEFAULTS_SUBMIT_FAILURE,
+	siteId,
+	error
+} );
+
+const mailchimpListsRequest = ( siteId ) => ( {
+	type: WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST,
+	siteId
+} );
+
+const mailchimpListsRequestSuccess = ( siteId, lists ) => ( {
+	type: WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_SUCCESS,
+	siteId,
+	lists
+} );
+
+const mailchimpListsRequestFailure = ( siteId, { error } ) => ( {
+	type: WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_FAILURE,
 	siteId,
 	error
 } );
@@ -154,14 +174,31 @@ export const submitMailchimpCampaignDefaults = ( siteId, campaignDefaults ) => (
 	dispatch( mailchimpCampaignDefaultsSubmit( siteId ) );
 
 	return request( siteId ).put( 'mailchimp/campaign_defaults', campaignDefaults )
-		.then( status => {
+		.then( settings => {
 			console.log( 'success' );
 			console.log( status );
-			dispatch( mailchimpCampaignDefaultsSubmitSuccess( siteId, status ) );
+			dispatch( mailchimpCampaignDefaultsSubmitSuccess( siteId, settings ) );
 		} )
 		.catch( error => {
 			console.log( 'error' );
 			console.log( error );
 			dispatch( mailchimpCampaignDefaultsSubmitFailure( siteId, error ) );
+		} );
+};
+
+export const requestLists = ( siteId ) => ( dispatch, getState ) => {
+	const state = getState();
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
+
+	dispatch( mailchimpListsRequest( siteId ) );
+
+	return request( siteId ).get( 'mailchimp/newsletter_setting' )
+		.then( lists => {
+			dispatch( mailchimpListsRequestSuccess( siteId, lists ) );
+		} )
+		.catch( error => {
+			dispatch( mailchimpListsRequestFailure( siteId, error ) );
 		} );
 };

@@ -8,14 +8,14 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestSettings } from './actions';
-import { isRequestingSettings } from './selectors';
+import { requestLists } from './actions';
+import { isRequestingLists } from './selectors';
 
-class QueryMailChimpSettings extends Component {
+class QueryMailChimpLists extends Component {
 	static propTypes = {
 		siteId:	PropTypes.number.isRequired,
 		isRequesting: PropTypes.bool.isRequired,
-		requestSettings: PropTypes.func.isRequired,
+		requestLists: PropTypes.func.isRequired,
 	}
 
 	componentDidMount() {
@@ -31,7 +31,7 @@ class QueryMailChimpSettings extends Component {
 
 	request( props ) {
 		if ( ! props.isRequesting ) {
-			props.requestSettings( props.siteId );
+			props.requestLists( props.siteId );
 		}
 	}
 
@@ -42,7 +42,7 @@ class QueryMailChimpSettings extends Component {
 
 export default connect(
 	( state, { siteId } ) => ( {
-		isRequesting: isRequestingSettings( state, siteId ),
+		isRequesting: isRequestingLists( state, siteId ),
 	} ),
-	{ requestSettings }
-)( QueryMailChimpSettings );
+	{ requestLists }
+)( QueryMailChimpLists );

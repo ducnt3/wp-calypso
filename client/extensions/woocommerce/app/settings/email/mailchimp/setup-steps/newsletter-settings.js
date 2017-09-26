@@ -2,43 +2,49 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import FormInputValidation from 'components/forms/form-input-validation';
-import SettingsPaymentsLocationCurrency from 'woocommerce/app/settings/payments/payments-location-currency.js';
-import { translate } from 'i18n-calypso';
+import FormSelect from 'components/forms/form-select';
+import QueryMailChimpLists from 'woocommerce/state/sites/settings/email/queryLists';
+import { isRequestingLists } from 'woocommerce/state/sites/settings/email/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { localize } from 'i18n-calypso';
 
-const fields = [
-	{ name: 'store_name', label: translate( 'Store Name' ) },
-	{ name: 'store_phone', label: translate( 'Phone' ) },
-	{ name: 'store_locale', label: translate( 'Locale' ) },
-	{ name: 'admin_email', label: translate( 'Admin Email' ) },
-];
-
-export default ( { storeData, onChange, validateFields } ) => {
+const NewsletterSettings = ( { storeData, onChange, validateFields, siteId, isRequesting, translate } ) => {
 	return (
 		<FormFieldset className="setup-steps__store-info-field">
-			<div>Make sure that store informatin is correct. Every field is required</div>
-			<SettingsPaymentsLocationCurrency />
-			{ fields.map( ( item, index ) => (
-				<div key={ index }>
-					<FormLabel>
-						{ item.label }
-					</FormLabel>
-					<FormTextInput
-						name={ item.name }
-						isError={ validateFields && ! storeData[ item.name ] }
-						onChange={ onChange }
-						value={ storeData[ item.name ] }
-					/>
-					{ ( validateFields && ! storeData.store_name ) && <FormInputValidation iserror text="field is required" /> }
-				</div>
+			<QueryMailChimpLists siteId={ siteId } />
+			<div>Pick a list, you will not able to change it for now so pick carfully</div>
+			<div>Create you list at mailchimp.com if you have not done it aready</div>
+			<FormLabel>
+				{ translate( 'Newsletter' ) }
+			</FormLabel>
+			<FormSelect
+				onChange={ onChange }
+				value={ storeData.mailchimp_list }
+				disabled={ isRequesting }>
+				{ storeData.mailchimp_lists && storeData.mailchimp_lists.map( ( list, index ) => (
+					<option key={ index } value={ list }>{ list }</option>
+				) ) }
+			</FormSelect>
 			) ) }
 		</FormFieldset>
 	);
 };
+
+const NewsletterSettingsConnected = connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		return {
+			siteId,
+			isRequesting: isRequestingLists( state, siteId )
+		};
+	}
+)( NewsletterSettings );
+
+export default localize( NewsletterSettingsConnected );
