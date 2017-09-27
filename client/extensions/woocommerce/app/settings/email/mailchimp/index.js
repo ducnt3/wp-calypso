@@ -11,6 +11,7 @@ import classNames from 'classnames';
  */
 import MailChimpGettingStarted from './getting-started';
 import MailChimpSetup from './setup-mailchimp';
+import MailChimpDashboard from './mailchimp_dashboard';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QueryMailChimpSettings from 'woocommerce/state/sites/settings/email/querySettings';
 import { isRequestingForSites } from 'state/plugins/installed/selectors';
@@ -25,7 +26,6 @@ class MailChimp extends React.Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			activeTab: props.settings.active_tab ? props.settings.active_tab : 'api_key',
 			setupWizardStarted: false
 		};
 	}
@@ -47,14 +47,15 @@ class MailChimp extends React.Component {
 	render() {
 		const { siteId, isRequestingMailChimpSettings } = this.props;
 		const className = classNames( 'mailchimp__main', { mailchimp__loading: isRequestingMailChimpSettings } );
-		const { activeTab, setupWizardStarted } = this.state;
+		const { setupWizardStarted } = this.state;
 		console.log( this.props.sitePlugins );
 		return (
 			<div className={ className }>
 				<QueryJetpackPlugins siteIds={ [ siteId ] } />
 				<QueryMailChimpSettings siteId={ siteId } />
-				{ ( includes( [ 'api_key' ], activeTab ) ) &&
-					<MailChimpGettingStarted
+				{ this.props.settings.active_tab === 'sync'
+					? <MailChimpDashboard />
+					:	<MailChimpGettingStarted
 						siteId={ siteId }
 						isPlaceholder={ isRequestingMailChimpSettings }
 						onClick={ this.startWizard } /> }

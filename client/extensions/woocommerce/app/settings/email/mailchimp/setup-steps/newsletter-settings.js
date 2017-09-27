@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,14 +26,16 @@ const NewsletterSettings = ( { storeData, onChange, validateFields, siteId, isRe
 				{ translate( 'Newsletter' ) }
 			</FormLabel>
 			<FormSelect
+				name={ 'mailchimp_list' }
 				onChange={ onChange }
 				value={ storeData.mailchimp_list }
 				disabled={ isRequesting }>
-				{ storeData.mailchimp_lists && storeData.mailchimp_lists.map( ( list, index ) => (
-					<option key={ index } value={ list }>{ list }</option>
-				) ) }
+				{ storeData.mailchimp_lists &&
+					map( storeData.mailchimp_lists, ( list, key ) => (
+						<option key={ key } value={ key }>{ list }</option>
+					) )
+				}
 			</FormSelect>
-			) ) }
 		</FormFieldset>
 	);
 };

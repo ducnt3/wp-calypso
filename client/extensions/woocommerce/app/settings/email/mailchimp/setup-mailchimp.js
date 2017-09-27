@@ -3,27 +3,24 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { pick, some, isEmpty } from 'lodash';
+import { get, pick, some, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import Card from 'components/card';
 import { localize } from 'i18n-calypso';
 import Dialog from 'components/dialog';
 import ProgressIndicator from 'components/wizard/progress-indicator';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import FormLegend from 'components/forms/form-legend';
-import FormRadio from 'components/forms/form-radio';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
 import {
 	submitMailChimpApiKey,
 	submitMailchimpStoreInfo,
-	submitMailchimpCampaignDefaults
+	submitMailchimpCampaignDefaults,
+	submitMailchimpNewsletterSettings
 } from 'woocommerce/state/sites/settings/email/actions.js';
 import { isSubbmittingApiKey, isApiKeyCorrect } from 'woocommerce/state/sites/settings/email/selectors';
 import StoreInfoStep from './setup-steps/store-info.js';
@@ -92,7 +89,7 @@ class MailChimpSetup extends React.Component {
 			step: LOG_INTO_MAILCHIMP_STEP,
 			settings: this.prepareDefaultValues( this.props.settings ),
 			settings_values_missing: false,
-			api_key_input: this.props.settings.mailchimp_api_key
+			api_key_input: this.props.settings.mailchimp_api_key,
 		};
 	}
 
@@ -106,6 +103,11 @@ class MailChimpSetup extends React.Component {
 		} else if ( ( nextProps.settings.active_tab === NEWSLETTER_SETTINGS_STEP ) &&
 			( this.state.step === CAMPAIGN_DEFAULTS_STEP ) ) {
 			this.setState( { step: NEWSLETTER_SETTINGS_STEP } );
+		}
+		if ( nextProps.settings.mailchimp_lists && ! this.state.settings.mailchimp_lists ) {
+			const newSettings = Object.assign( {}, this.state.settings );
+			newSettings.mailchimp_lists = nextProps.settings.mailchimp_lists;
+			this.setState( { settings: newSettings } );
 		}
 	}
 
@@ -134,12 +136,15 @@ class MailChimpSetup extends React.Component {
 		settings.store_state = address.state;
 		settings.store_country = address.country;
 		settings.store_postal_code = address.postcode;
-		console.log( this.props.address );
 		return settings;
 	}
 
 	getCampaingDefaultsSettings = () => {
 		return pick( this.state.settings, campaignDefaultsRequiredFields );
+	}
+
+	getNewsletterSettings = () => {
+		return { mailchimp_list: get( this.state.settings, 'mailchimp_list', null ) };
 	}
 
 	hasEmptyValues = ( data ) => {
@@ -198,6 +203,15 @@ class MailChimpSetup extends React.Component {
 			this.setState( { settings_values_missing: false } );
 			this.props.submitMailchimpCampaignDefaults( this.props.siteId, settings );
 			return;
+		} else if ( this.state.step === NEWSLETTER_SETTINGS_STEP ) {
+			const list_settings = this.getNewsletterSettings();
+			if ( ! list_settings ) {
+				this.setState( { settings_values_missing: true } );
+				return;
+			}
+			this.setState( { settings_values_missing: false } );
+			this.props.submitMailchimpNewsletterSettings( this.props.siteId, list_settings );
+			return;
 		}
 		this.setState( { step: steps[ this.state.step ].nextStep } );
 	}
@@ -255,7 +269,6 @@ class MailChimpSetup extends React.Component {
 			{ action: 'next', label: translate( 'Next' ), onClick: this.next, isPrimary: true, additionalClassNames: isButtonBusy },
 		];
 
-		console.log( this.state.api_key_input );
 		return (
 			<Dialog
 				isVisible={ true }
@@ -263,7 +276,7 @@ class MailChimpSetup extends React.Component {
 				onClose={ this.onClose }>
 				<ProgressIndicator
 					stepNumber={ steps[ this.state.step ].number }
-					totalSteps={ 4 } />
+					totalSteps={ 6 } />
 				{ this.renderStep() }
 			</Dialog>
 		);
@@ -285,6 +298,7 @@ export default localize( connect(
 	{
 		submitMailChimpApiKey,
 		submitMailchimpStoreInfo,
-		submitMailchimpCampaignDefaults
+		submitMailchimpCampaignDefaults,
+		submitMailchimpNewsletterSettings
 	}
 )( MailChimpSetup ) );

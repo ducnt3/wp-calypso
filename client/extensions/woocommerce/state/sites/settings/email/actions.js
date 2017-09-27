@@ -19,6 +19,9 @@ import {
 	WOOCOMMERCE_MAILCHIMP_CAMPAIGN_DEFAULTS_SUBMIT,
 	WOOCOMMERCE_MAILCHIMP_CAMPAIGN_DEFAULTS_SUBMIT_SUCCESS,
 	WOOCOMMERCE_MAILCHIMP_CAMPAIGN_DEFAULTS_SUBMIT_FAILURE,
+	WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT,
+	WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_SUCCESS,
+	WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_FAILURE,
 } from 'woocommerce/state/action-types';
 
 const mailchimpSettingsRequest = ( siteId ) => ( {
@@ -102,6 +105,23 @@ const mailchimpListsRequestSuccess = ( siteId, lists ) => ( {
 
 const mailchimpListsRequestFailure = ( siteId, { error } ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_FAILURE,
+	siteId,
+	error
+} );
+
+const mailchimpNewsletterSettingsSubmit = ( siteId ) => ( {
+	type: WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT,
+	siteId
+} );
+
+const mailchimpNewsletterSettingsSubmitSuccess = ( siteId, settings ) => ( {
+	type: WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_SUCCESS,
+	siteId,
+	settings
+} );
+
+const mailchimpNewsletterSettingsSubmitFailure = ( siteId, { error } ) => ( {
+	type: WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_FAILURE,
 	siteId,
 	error
 } );
@@ -200,5 +220,26 @@ export const requestLists = ( siteId ) => ( dispatch, getState ) => {
 		} )
 		.catch( error => {
 			dispatch( mailchimpListsRequestFailure( siteId, error ) );
+		} );
+};
+
+export const submitMailchimpNewsletterSettings = ( siteId, newsLetter ) => ( dispatch, getState ) => {
+	const state = getState();
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
+
+	dispatch( mailchimpNewsletterSettingsSubmit( siteId ) );
+
+	return request( siteId ).put( 'mailchimp/newsletter_setting', newsLetter )
+		.then( settings => {
+			console.log( 'success' );
+			console.log( settings );
+			dispatch( mailchimpNewsletterSettingsSubmitSuccess( siteId, settings ) );
+		} )
+		.catch( error => {
+			console.log( 'error' );
+			console.log( error );
+			dispatch( mailchimpNewsletterSettingsSubmitFailure( siteId, error ) );
 		} );
 };

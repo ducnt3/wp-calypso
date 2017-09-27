@@ -15,7 +15,10 @@ import {
 	WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_FAILURE,
 	WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT,
 	WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT_SUCCESS,
-	WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT_FAILURE
+	WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT_FAILURE,
+	WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT,
+	WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_SUCCESS,
+	WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_FAILURE
 } from 'woocommerce/state/action-types';
 
 function settings( state = {}, action ) {
@@ -25,6 +28,7 @@ function settings( state = {}, action ) {
 		case WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_CAMPAIGN_DEFAULTS_SUBMIT_SUCCESS:
+		case WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT:
 			return Object.assign( {}, state, action.settings );
 		case WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_SUCCESS:
 			return Object.assign( {}, state, { mailchimp_lists: action.lists } );
@@ -134,6 +138,29 @@ function listsRequestError( state = false, action ) {
 	return state;
 }
 
+function newsletterSettingsSubmit( state = false, { type } ) {
+	switch ( type ) {
+		case WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT:
+		case WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_SUCCESS:
+		case WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_FAILURE:
+			return WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT === type;
+	}
+
+	return state;
+}
+
+function newsletterSettingsSubmitError( state = false, action ) {
+	switch ( action.type ) {
+		case WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_SUCCESS:
+		case WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_FAILURE:
+			const error = WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_FAILURE === action.type
+				? action.error : false;
+			return error;
+	}
+
+	return state;
+}
+
 export default combineReducers( {
 	settings,
 	settingsRequest,
@@ -144,5 +171,7 @@ export default combineReducers( {
 	storeInfoSubmit,
 	storeInfoSubmitError,
 	listsRequest,
-	listsRequestError
+	listsRequestError,
+	newsletterSettingsSubmit,
+	newsletterSettingsSubmitError
 } );
