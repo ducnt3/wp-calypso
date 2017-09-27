@@ -7,8 +7,8 @@ import React from 'react';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-
-// Get reed of this, this should not be visible to the user - he does not need this.
+import Button from 'components/button';
+import Card from 'components/card';
 
 class MailChimpDashboard extends React.Component {
 
@@ -22,7 +22,12 @@ class MailChimpDashboard extends React.Component {
 
 	render() {
 		return (
+			<Card>
 				<div>Dashboard view</div>
+				<Button className="mailchimp__getting-started-button" onClick={ this.props.onClick }>
+					Start setup wizard.
+				</Button>
+			</Card>
 		);
 	}
 }

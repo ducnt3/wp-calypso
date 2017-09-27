@@ -35,7 +35,7 @@ const KEY_INPUT_STEP = 'key_input';
 const STORE_INFO_STEP = 'store_info';
 const CAMPAIGN_DEFAULTS_STEP = 'campaign_defaults';
 const NEWSLETTER_SETTINGS_STEP = 'newsletter_settings';
-const STORE_SYNC = 'store_sync';
+const STORE_SYNC = 'sync';
 
 const steps = {
 	[ LOG_INTO_MAILCHIMP_STEP ]: { number: 0, nextStep: KEY_INPUT_STEP },
@@ -103,6 +103,9 @@ class MailChimpSetup extends React.Component {
 		} else if ( ( nextProps.settings.active_tab === NEWSLETTER_SETTINGS_STEP ) &&
 			( this.state.step === CAMPAIGN_DEFAULTS_STEP ) ) {
 			this.setState( { step: NEWSLETTER_SETTINGS_STEP } );
+		} else if ( ( nextProps.settings.active_tab === STORE_SYNC ) &&
+			( this.state.step === NEWSLETTER_SETTINGS_STEP ) ) {
+			nextProps.onClose();
 		}
 		if ( nextProps.settings.mailchimp_lists && ! this.state.settings.mailchimp_lists ) {
 			const newSettings = Object.assign( {}, this.state.settings );
@@ -276,7 +279,7 @@ class MailChimpSetup extends React.Component {
 				onClose={ this.onClose }>
 				<ProgressIndicator
 					stepNumber={ steps[ this.state.step ].number }
-					totalSteps={ 6 } />
+					totalSteps={ 5 } />
 				{ this.renderStep() }
 			</Dialog>
 		);

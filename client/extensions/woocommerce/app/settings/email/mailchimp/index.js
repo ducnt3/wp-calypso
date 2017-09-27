@@ -54,7 +54,8 @@ class MailChimp extends React.Component {
 				<QueryJetpackPlugins siteIds={ [ siteId ] } />
 				<QueryMailChimpSettings siteId={ siteId } />
 				{ this.props.settings.active_tab === 'sync'
-					? <MailChimpDashboard />
+					? <MailChimpDashboard
+							onClick={ this.startWizard } />
 					:	<MailChimpGettingStarted
 						siteId={ siteId }
 						isPlaceholder={ isRequestingMailChimpSettings }
