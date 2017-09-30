@@ -45,26 +45,32 @@ class MailChimp extends React.Component {
 	}
 
 	render() {
-		const { siteId, isRequestingMailChimpSettings } = this.props;
+		const { siteId, isRequestingMailChimpSettings, isRequestingPlugins } = this.props;
 		const className = classNames( 'mailchimp__main', { mailchimp__loading: isRequestingMailChimpSettings } );
 		const { setupWizardStarted } = this.state;
+		const isRequestingData = ( isRequestingMailChimpSettings || isRequestingPlugins );
+		const mailChimpIsReady = ! isRequestingData && ( this.props.settings.active_tab === 'sync' );
 		console.log( this.props.sitePlugins );
 		return (
 			<div className={ className }>
 				<QueryJetpackPlugins siteIds={ [ siteId ] } />
 				<QueryMailChimpSettings siteId={ siteId } />
-				{ this.props.settings.active_tab === 'sync'
-					? <MailChimpDashboard
+				{ isRequestingData && <Card> Mailchimp is Loading </Card> }
+				{ mailChimpIsReady && <MailChimpDashboard onClick={ this.startWizard } /> }
+				{ ! setupWizardStarted && ! isRequestingData && this.props.settings.active_tab !== 'sync' &&
+					<MailChimpGettingStarted
+							siteId={ siteId }
+							isPlaceholder={ isRequestingMailChimpSettings }
 							onClick={ this.startWizard } />
-					:	<MailChimpGettingStarted
-						siteId={ siteId }
-						isPlaceholder={ isRequestingMailChimpSettings }
-						onClick={ this.startWizard } /> }
-				{ setupWizardStarted && <MailChimpSetup
-					settings={ this.props.settings }
-					siteId={ this.props.siteId }
-					activeTab={ this.state.activeTab }
-					onClose={ this.closeWizard } /> }
+				}
+				{ setupWizardStarted &&
+					<MailChimpSetup
+							hasMailChimp={ this.props.hasMailChimp }
+							settings={ this.props.settings }
+							siteId={ this.props.siteId }
+							activeTab={ this.state.activeTab }
+							onClose={ this.closeWizard } />
+				}
 				<Card>
 					{ 'Version: ' + this.props.version + ' ' + JSON.stringify( this.props.settings ) }
 				</Card>
@@ -75,7 +81,7 @@ class MailChimp extends React.Component {
 
 const MailChimpConnected = connect(
 	( state ) => {
-		const mailChimpId = 'mc-woocommerce/mailchimp-woocommerce';
+		const mailChimpId = 'mailchimp-for-woocommerce/mailchimp-woocommerce';
 		const siteId = getSelectedSiteId( state );
 		const isRequestingPlugins = isRequestingForSites( state, [ siteId ] );
 		const isRequestingMailChimpSettings = isRequestingSettings( state, siteId );
@@ -90,7 +96,7 @@ const MailChimpConnected = connect(
 			version,
 			isRequestingPlugins,
 			isRequestingMailChimpSettings,
-			settings: mailchimpSettings( state, siteId )
+			settings: mailchimpSettings( state, siteId ),
 		};
 	}
 )( MailChimp );

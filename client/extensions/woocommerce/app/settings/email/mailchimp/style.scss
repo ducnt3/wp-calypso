@@ -41,6 +41,50 @@
 	}
 }
 
+&.dialog__content.mailchimp__setup {
+	margin: 0px;
+	padding: 0px;
+	width: 500px;
+	min-height: 400px;
+	text-align: left;
+}
+
+.mailchimp__setup-dialog-content {
+	padding-top: 24px;
+	padding-left: 24px;
+	padding-bottom: 24px;
+	padding-right: 24px;
+}
+
+.mailchimp__setup-dialog-progress {
+	margin: 0;
+}
+
+.mailchimp__setup-dialog-title {
+	font-size: 24px;
+	padding-top: 24px;
+  padding-left: 24px;
+  padding-bottom: 10px;
+}
+
+.setup-steps__login-title {
+	font-size: 18px;
+	font-weight: 500;
+	margin-bottom: 5px;
+}
+
+.setup-steps__mailchimp-key-input {
+	.form-text-input {
+		text-align: left;
+	}
+}
+
+.setup-steps__mailchimp-login-button {
+	margin-top: 10px;
+	.gridicon {
+		padding-left: 10px;
+	}
+}
 
 .mailchimp__loading {
 	background-color: lighten( $gray, 30% );

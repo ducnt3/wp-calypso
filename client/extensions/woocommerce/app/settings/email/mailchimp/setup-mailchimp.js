@@ -8,14 +8,11 @@ import { get, pick, some, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import { localize } from 'i18n-calypso';
 import Dialog from 'components/dialog';
+import RequiredPluginsInstallView from 'woocommerce/app/dashboard/required-plugins-install-view';
 import ProgressIndicator from 'components/wizard/progress-indicator';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import FormInputValidation from 'components/forms/form-input-validation';
+import ProgressBar from 'components/progress-bar';
 import {
 	submitMailChimpApiKey,
 	submitMailchimpStoreInfo,
@@ -23,9 +20,11 @@ import {
 	submitMailchimpNewsletterSettings
 } from 'woocommerce/state/sites/settings/email/actions.js';
 import { isSubbmittingApiKey, isApiKeyCorrect } from 'woocommerce/state/sites/settings/email/selectors';
+import LogIntoMailchimp from './setup-steps/log-into-mailchimp.js';
 import StoreInfoStep from './setup-steps/store-info.js';
 import CampaignDefaultsStep from './setup-steps/campaign-defaults.js';
 import NewsletterSettings from './setup-steps/newsletter-settings.js';
+import KeyInputStep from './setup-steps/key-input.js';
 import {
 	getStoreLocation,
 } from 'woocommerce/state/sites/settings/general/selectors';
@@ -44,34 +43,6 @@ const steps = {
 	[ CAMPAIGN_DEFAULTS_STEP ]: { number: 3, nextStep: NEWSLETTER_SETTINGS_STEP },
 	[ NEWSLETTER_SETTINGS_STEP ]: { number: 4, nextStep: STORE_SYNC }
 };
-
-const LogIntoMailchimp = localize( ( { translate } ) => (
-	<Button href="https://login.mailchimp.com/" target="_blank" >
-		{ translate( 'Signup or log in to MailChimp' ) }
-	</Button>
-) );
-
-//get this to its own component
-const KeyInputStep = localize( ( { translate, onChange, apiKey, isKeyCorrect } ) => (
-	<FormFieldset className="mailchimp__setup-mailchimp-key-input">
-		<FormLabel required={ true }>
-			{ translate( 'Mailchimp API Key:' ) }
-		</FormLabel>
-		<FormTextInput
-			name={ 'api_key' }
-			isError={ ! isKeyCorrect }
-			placeholder={ 'Enter your MailChimp API key' }
-			onChange={ onChange }
-			value={ apiKey }
-		/>
-		{ ! isKeyCorrect && <FormInputValidation isError text="Key appears to be invalid" /> }
-		<div>
-			<span>{ translate( 'To find your Mailchimp API key, go to ' ) }</span>
-			<span>{ translate( 'settting > Extras > API keys' ) }</span>
-			<div>{ translate( 'From there, grab an existing key or generate a new on for your store' ) } </div>
-		</div>
-	</FormFieldset>
-) );
 
 const storSettingsRequriredFields = [ 'store_name', 'store_street', 'store_city', 'store_state',
 	'store_postal_code', 'store_country', 'store_phone', 'store_locale', 'store_timezone',
@@ -265,23 +236,46 @@ class MailChimpSetup extends React.Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { translate, hasMailChimp, siteId } = this.props;
 		const isButtonBusy = this.props.isBusy ? 'is-busy' : '';
 		const buttons = [
 			{ action: 'cancel', label: translate( 'Cancel' ) },
 			{ action: 'next', label: translate( 'Next' ), onClick: this.next, isPrimary: true, additionalClassNames: isButtonBusy },
 		];
 
+		const dialogClass = 'woocommerce mailchimp__setup';
+		const stepNum = steps[ this.state.step ].number;
+		if ( ! hasMailChimp ) {
+			return (
+				<Dialog
+					isVisible={ true }
+					buttons={ null }
+					className={ dialogClass }>
+					<div className="mailchimp__setup-dialog-title">MailChimp</div>
+					<RequiredPluginsInstallView
+						site={ { ID: siteId } }
+						skipConfirmation ={ true } />
+				</Dialog>
+			);
+		}
 		return (
-			<Dialog
-				isVisible={ true }
-				buttons={ buttons }
-				onClose={ this.onClose }>
-				<ProgressIndicator
-					stepNumber={ steps[ this.state.step ].number }
-					totalSteps={ 5 } />
-				{ this.renderStep() }
-			</Dialog>
+				<Dialog
+					isVisible={ true }
+					buttons={ buttons }
+					onClose={ this.onClose }
+					className={ dialogClass }>
+					<div className="mailchimp__setup-dialog-title">MailChimp</div>
+					<ProgressBar
+						value={ stepNum + 1 }
+						total={ 5 }
+						compact={ true } />
+					<ProgressIndicator
+						stepNumber={ stepNum }
+						totalSteps={ 5 } />
+						<div className="mailchimp__setup-dialog-content">
+							{ this.renderStep() }
+						</div>
+				</Dialog>
 		);
 	}
 }
