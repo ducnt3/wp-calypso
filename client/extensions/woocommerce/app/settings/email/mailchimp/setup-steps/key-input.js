@@ -14,7 +14,17 @@ import { localize } from 'i18n-calypso';
 
 export default localize( ( { translate, onChange, apiKey, isKeyCorrect } ) => (
 	<FormFieldset className="setup-steps__mailchimp-key-input">
-		<FormLabel required={ true }>
+		<div className="setup-steps__mailchimp-api-intro-notice">
+			{ translate( 'Now that you\'re signed in to MailChimp, you need an API key to start the connection process' ) }
+		</div>
+		<div className="setup-steps__mailchimp-api-directions" >
+			<span>{ translate( 'To find your Mailchimp API key, go to ' ) }</span>
+			<span className="setup-steps__mailchimp-api-directions-bold">
+				{ translate( 'Settting > Extras > API keys.' ) }
+			</span>
+			<div>{ translate( 'From there, grab an existing key or generate a new on for your store.' ) } </div>
+		</div>
+		<FormLabel required={ ! isKeyCorrect }>
 			{ translate( 'Mailchimp API Key:' ) }
 		</FormLabel>
 		<FormTextInput
@@ -25,10 +35,5 @@ export default localize( ( { translate, onChange, apiKey, isKeyCorrect } ) => (
 			value={ apiKey }
 		/>
 		{ ! isKeyCorrect && <FormInputValidation isError text="Key appears to be invalid" /> }
-		<div>
-			<span>{ translate( 'To find your Mailchimp API key, go to ' ) }</span>
-			<span>{ translate( 'settting > Extras > API keys' ) }</span>
-			<div>{ translate( 'From there, grab an existing key or generate a new on for your store' ) } </div>
-		</div>
 	</FormFieldset>
 ) );

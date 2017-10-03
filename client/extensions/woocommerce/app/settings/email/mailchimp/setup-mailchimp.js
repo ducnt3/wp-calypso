@@ -25,9 +25,8 @@ import StoreInfoStep from './setup-steps/store-info.js';
 import CampaignDefaultsStep from './setup-steps/campaign-defaults.js';
 import NewsletterSettings from './setup-steps/newsletter-settings.js';
 import KeyInputStep from './setup-steps/key-input.js';
-import {
-	getStoreLocation,
-} from 'woocommerce/state/sites/settings/general/selectors';
+import { getStoreLocation } from 'woocommerce/state/sites/settings/general/selectors';
+import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
 
 const LOG_INTO_MAILCHIMP_STEP = 'log_into';
 const KEY_INPUT_STEP = 'key_input';
@@ -71,6 +70,7 @@ class MailChimpSetup extends React.Component {
 		} else if ( ( nextProps.settings.active_tab === CAMPAIGN_DEFAULTS_STEP ) &&
 			( this.state.step === STORE_INFO_STEP ) ) {
 			this.setState( { step: CAMPAIGN_DEFAULTS_STEP } );
+			this.setState( { settings: this.prepareDefaultValues( nextProps.settings ) } );
 		} else if ( ( nextProps.settings.active_tab === NEWSLETTER_SETTINGS_STEP ) &&
 			( this.state.step === CAMPAIGN_DEFAULTS_STEP ) ) {
 			this.setState( { step: NEWSLETTER_SETTINGS_STEP } );
@@ -93,6 +93,7 @@ class MailChimpSetup extends React.Component {
 		newSettings.campaign_language = settings.campaign_language || settings.store_locale || '';
 		newSettings.campaign_permission_reminder = settings.campaign_permission_reminder ||
 			'You were subscribed to the newsletter from ' + settings.store_name;
+		newSettings.store_timezone = settings.store_timezone || 'America/NewYork';
 		return newSettings;
 	}
 
@@ -102,7 +103,7 @@ class MailChimpSetup extends React.Component {
 
 	getStoreSettings = () => {
 		// clear this and pass only what is required.
-		const { address } = this.props;
+		const { address, currency } = this.props;
 
 		const settings = pick( this.state.settings, storSettingsRequriredFields );
 		settings.store_city = address.city;
@@ -110,6 +111,7 @@ class MailChimpSetup extends React.Component {
 		settings.store_state = address.state;
 		settings.store_country = address.country;
 		settings.store_postal_code = address.postcode;
+		settings.store_currency_code = currency;
 		return settings;
 	}
 
@@ -285,10 +287,12 @@ export default localize( connect(
 		const subbmittingApiKey = isSubbmittingApiKey( state, props.siteId );
 		const isKeyCorrect = isApiKeyCorrect( state, props.siteId );
 		const address = getStoreLocation( state );
+		const currency = getCurrencyWithEdits( state );
 		const isBusy = subbmittingApiKey;
 		return {
 			isBusy,
 			address,
+			currency,
 			isKeyCorrect
 		};
 	},

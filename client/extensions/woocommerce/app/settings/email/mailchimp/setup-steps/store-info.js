@@ -10,6 +10,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
+import TimeZone from 'components/timezone';
 import SettingsPaymentsLocationCurrency from 'woocommerce/app/settings/payments/payments-location-currency.js';
 import { translate } from 'i18n-calypso';
 
@@ -21,6 +22,14 @@ const fields = [
 ];
 
 export default ( { storeData, onChange, validateFields } ) => {
+	const onTimezoneSelect = ( value ) => {
+		const e = { target: {
+			name: 'store_timezone',
+			value
+		} };
+		onChange( e );
+	};
+
 	return (
 		<FormFieldset className="setup-steps__store-info-field">
 			<div>Make sure that store informatin is correct. Every field is required</div>
@@ -39,6 +48,12 @@ export default ( { storeData, onChange, validateFields } ) => {
 					{ ( validateFields && ! storeData[ item.name ] ) && <FormInputValidation iserror text="field is required" /> }
 				</div>
 			) ) }
+			<FormLabel>
+				{ translate( 'Store Timezone' ) }
+			</FormLabel>
+			<TimeZone
+				selectedZone={ storeData.store_timezone }
+				onSelect={ onTimezoneSelect } />
 		</FormFieldset>
 	);
 };
