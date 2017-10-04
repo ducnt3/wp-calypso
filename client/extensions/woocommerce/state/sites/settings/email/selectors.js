@@ -84,4 +84,30 @@ export const isRequestingLists = ( state, siteId ) => {
 			'listsRequest' ];
 
 	return get( state, path, false );
-}
+};
+
+export const syncStatus = ( state, siteId ) => {
+	const path =
+		[ 'extensions',
+			'woocommerce',
+			'sites',
+			siteId,
+			'settings',
+			'email',
+			'syncStatus' ];
+
+	return get( state, path, false );
+};
+
+export const isRequestingSyncStatus = ( state, siteId ) => {
+	const path =
+		[ 'extensions',
+			'woocommerce',
+			'sites',
+			siteId,
+			'settings',
+			'email',
+			'syncStatusRequest' ];
+
+	return get( state, path, false );
+};

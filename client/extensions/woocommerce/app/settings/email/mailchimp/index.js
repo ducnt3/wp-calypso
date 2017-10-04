@@ -56,7 +56,7 @@ class MailChimp extends React.Component {
 				<QueryJetpackPlugins siteIds={ [ siteId ] } />
 				<QueryMailChimpSettings siteId={ siteId } />
 				{ isRequestingData && <Card> Mailchimp is Loading </Card> }
-				{ mailChimpIsReady && <MailChimpDashboard onClick={ this.startWizard } /> }
+				{ mailChimpIsReady && <MailChimpDashboard siteId={ siteId } onClick={ this.startWizard } /> }
 				{ ! setupWizardStarted && ! isRequestingData && this.props.settings.active_tab !== 'sync' &&
 					<MailChimpGettingStarted
 							siteId={ siteId }
@@ -72,7 +72,7 @@ class MailChimp extends React.Component {
 							onClose={ this.closeWizard } />
 				}
 				<Card>
-					{ 'Version: ' + this.props.version + ' ' + JSON.stringify( this.props.settings ) }
+					{ 'Version: ' + this.props.version + ' ' + JSON.stringify( this.props.settings, null, 2 ) }
 				</Card>
 			</div>
 		);

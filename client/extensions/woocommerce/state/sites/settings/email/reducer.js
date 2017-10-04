@@ -16,6 +16,9 @@ import {
 	WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT,
 	WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT_SUCCESS,
 	WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT_FAILURE,
+	WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST,
+	WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_SUCCESS,
+	WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_FAILURE,
 	WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT,
 	WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_SUCCESS,
 	WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_FAILURE
@@ -53,6 +56,38 @@ function settingsRequestError( state = false, action ) {
 		case WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_FAILURE:
 			const error = WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_FAILURE === action.type
+				? action.error : false;
+			return error;
+	}
+
+	return state;
+}
+
+function syncStatus( state = {}, action ) {
+	switch ( action.type ) {
+		case WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_SUCCESS:
+			return Object.assign( {}, state, action.syncStatus );
+	}
+
+	return state;
+}
+
+function syncStatusRequest( state = false, { type } ) {
+	switch ( type ) {
+		case WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST:
+		case WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_SUCCESS:
+		case WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_FAILURE:
+			return WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST === type;
+	}
+
+	return state;
+}
+
+function syncStatusRequestError( state = false, action ) {
+	switch ( action.type ) {
+		case WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_SUCCESS:
+		case WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_FAILURE:
+			const error = WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_FAILURE === action.type
 				? action.error : false;
 			return error;
 	}
@@ -165,6 +200,9 @@ export default combineReducers( {
 	settings,
 	settingsRequest,
 	settingsRequestError,
+	syncStatus,
+	syncStatusRequest,
+	syncStatusRequestError,
 	apiKeySubmit,
 	apiKeySubbmitError,
 	apiKeyCorrect,

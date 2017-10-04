@@ -16,6 +16,9 @@ import {
 	WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT,
 	WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT_SUCCESS,
 	WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT_FAILURE,
+	WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST,
+	WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_SUCCESS,
+	WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_FAILURE,
 	WOOCOMMERCE_MAILCHIMP_CAMPAIGN_DEFAULTS_SUBMIT,
 	WOOCOMMERCE_MAILCHIMP_CAMPAIGN_DEFAULTS_SUBMIT_SUCCESS,
 	WOOCOMMERCE_MAILCHIMP_CAMPAIGN_DEFAULTS_SUBMIT_FAILURE,
@@ -109,6 +112,23 @@ const mailchimpListsRequestFailure = ( siteId, { error } ) => ( {
 	error
 } );
 
+const mailchimpSyncStatusRequest = ( siteId ) => ( {
+	type: WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST,
+	siteId
+} );
+
+const mailchimpSyncStatusRequestSuccess = ( siteId, syncStatus ) => ( {
+	type: WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_SUCCESS,
+	siteId,
+	syncStatus
+} );
+
+const mailchimpSyncStatusRequestFailure = ( siteId, { error } ) => ( {
+	type: WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_FAILURE,
+	siteId,
+	error
+} );
+
 const mailchimpNewsletterSettingsSubmit = ( siteId ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT,
 	siteId
@@ -153,13 +173,9 @@ export const submitMailChimpApiKey = ( siteId, apiKey ) => ( dispatch, getState 
 
 	return request( siteId ).put( 'mailchimp/api_key', { mailchimp_api_key: apiKey } )
 		.then( settings => {
-			console.log( 'success' );
-			console.log( settings );
 			dispatch( mailchimpApiKeySubmitSuccess( siteId, settings ) );
 		} )
 		.catch( error => {
-			console.log( 'error' );
-			console.log( error );
 			dispatch( mailchimpApiKeySubmitFailure( siteId, error ) );
 		} );
 };
@@ -174,13 +190,9 @@ export const submitMailchimpStoreInfo = ( siteId, storeInfo ) => ( dispatch, get
 
 	return request( siteId ).put( 'mailchimp/store_info', storeInfo )
 		.then( settings => {
-			console.log( 'success' );
-			console.log( settings );
 			dispatch( mailchimpStoreInfoSubmitSuccess( siteId, settings ) );
 		} )
 		.catch( error => {
-			console.log( 'error' );
-			console.log( error );
 			dispatch( mailchimpStoreInfoSubbmitFailure( siteId, error ) );
 		} );
 };
@@ -195,13 +207,9 @@ export const submitMailchimpCampaignDefaults = ( siteId, campaignDefaults ) => (
 
 	return request( siteId ).put( 'mailchimp/campaign_defaults', campaignDefaults )
 		.then( settings => {
-			console.log( 'success' );
-			console.log( status );
 			dispatch( mailchimpCampaignDefaultsSubmitSuccess( siteId, settings ) );
 		} )
 		.catch( error => {
-			console.log( 'error' );
-			console.log( error );
 			dispatch( mailchimpCampaignDefaultsSubmitFailure( siteId, error ) );
 		} );
 };
@@ -223,6 +231,22 @@ export const requestLists = ( siteId ) => ( dispatch, getState ) => {
 		} );
 };
 
+export const requestSyncStatus = ( siteId ) => ( dispatch, getState ) => {
+	const state = getState();
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
+	dispatch( mailchimpSyncStatusRequest( siteId ) );
+
+	return request( siteId ).get( 'mailchimp/sync' )
+		.then( sync_status => {
+			dispatch( mailchimpSyncStatusRequestSuccess( siteId, sync_status ) );
+		} )
+		.catch( error => {
+			dispatch( mailchimpSyncStatusRequestFailure( siteId, error ) );
+		} );
+};
+
 export const submitMailchimpNewsletterSettings = ( siteId, newsLetter ) => ( dispatch, getState ) => {
 	const state = getState();
 	if ( ! siteId ) {
@@ -233,13 +257,9 @@ export const submitMailchimpNewsletterSettings = ( siteId, newsLetter ) => ( dis
 
 	return request( siteId ).put( 'mailchimp/newsletter_setting', newsLetter )
 		.then( settings => {
-			console.log( 'success' );
-			console.log( settings );
 			dispatch( mailchimpNewsletterSettingsSubmitSuccess( siteId, settings ) );
 		} )
 		.catch( error => {
-			console.log( 'error' );
-			console.log( error );
 			dispatch( mailchimpNewsletterSettingsSubmitFailure( siteId, error ) );
 		} );
 };
