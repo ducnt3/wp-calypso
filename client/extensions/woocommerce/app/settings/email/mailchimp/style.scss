@@ -118,3 +118,58 @@
 	background-size: 120px 100%;
 	background-image: linear-gradient( -45deg, lighten( $gray, 30% ) 28%, $white 28%, $white 72%, lighten( $gray, 30% ) 72%);
 }
+
+.mailchimp__dashboard{
+	margin: 0px;
+	padding: 0px;
+}
+
+.mailchimp__dashboard-first-section {
+	display: flex;
+}
+
+.mailchimp__dashboard-title {
+	flex-grow: 1;
+	font-size: 18px;
+	font-weight: 500;
+	margin-bottom: 5px;
+}
+
+.mailchimp__dashboard-title-and-slogan {
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		0 1px 2px lighten( $gray, 30% );
+	flex-grow: 1;
+	padding: 16px;
+}
+
+.mailchimp__dashboard-sync-status {
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		0 1px 2px lighten( $gray, 30% );
+	flex-grow: 0;
+	padding: 16px;
+}
+
+.mailchimp__account-info {
+	padding-right: 4px;
+	font-weight: 500;
+}
+
+.mailchimp__dashboard-settings {
+	display: flex;
+	padding-left: 16px;
+	padding-top: 32px;
+	padding-right: 16px;
+	padding-bottom: 16px;
+}
+
+.mailchimp__dashboard-settings-preview {
+	padding-left: 48px;
+}
+
+.mailchimp__dashboard-settings-preview-view {
+	min-width: 160px;
+	min-height:  80px;
+	background: lighten( $gray, 30% );
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		0 1px 2px $gray;
+}
