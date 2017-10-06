@@ -23,6 +23,8 @@ import {
 	syncStatus,
 	mailchimpSettings,
 	isRequestingSettings } from 'woocommerce/state/sites/settings/email/selectors';
+import { submitMailchimpNewsletterSettings } from 'woocommerce/state/sites/settings/email/actions.js';
+import { isSubmittingNewsletterSetting } from 'woocommerce/state/sites/settings/email/selectors';
 
 const SyncTab = localize( ( { translate, syncState, resync } ) => {
 	const { account_name, store_syncing, product_count, mailchimp_total_products,
@@ -153,6 +155,19 @@ class MailChimpDashboard extends React.Component {
 		this.setState( { settings: Object.assign( {}, this.state.settings, change ) } );
 	}
 
+	onSave = () => {
+		const { submitMailchimpNewsletterSettings: submit, siteId } = this.props;
+		const settings = this.state.settings;
+		const message = {
+			mailchimp_list: settings.mailchimp_list,
+			newsletter_label: settings.newsletter_label,
+			mailchimp_auto_subscribe: settings.mailchimp_auto_subscribe,
+			mailchimp_checkbox_defaults: settings.mailchimp_checkbox_defaults,
+			mailchimp_checkbox_action: settings.mailchimp_checkbox_action,
+		};
+		submit( siteId, message );
+	}
+
 	render() {
 		const { translate } = this.props;
 		const slogan = translate( 'Allow customers to subscribe to your MailChimp email list' );
@@ -180,6 +195,13 @@ class MailChimpDashboard extends React.Component {
 					<Button className="mailchimp__getting-started-button" onClick={ this.props.onClick }>
 						Start setup wizard.
 					</Button>
+					<Button
+						primary
+						onClick={ this.onSave }
+						busy={ this.props.isSubmittingNewsletterSetting }
+						disabled={ this.props.isSubmittingNewsletterSetting }>
+						{ translate( 'Save' ) }
+					</Button>
 				</Card>
 			</div>
 		);
@@ -191,6 +213,10 @@ export default connect(
 		siteId,
 		syncStatusData: syncStatus( state, siteId ),
 		isRequestingSettings: isRequestingSettings( state, siteId ),
+		isSubmittingNewsletterSetting: isSubmittingNewsletterSetting( state, siteId ),
 		settings: mailchimpSettings( state, siteId ),
-	} )
+	} ),
+	{
+		submitMailchimpNewsletterSettings
+	}
 )( localize( MailChimpDashboard ) );

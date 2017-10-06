@@ -12,28 +12,18 @@ import { localize } from 'i18n-calypso';
 import Main from 'components/main';
 import MailChimp from './mailchimp';
 import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
 import SettingsNavigation from '../navigation';
 import { getLink } from 'woocommerce/lib/nav-utils';
 
-const Email = ( { isSaving, site, siteId, translate, className } ) => {
+const Email = ( { site, siteId, translate, className } ) => {
 	const breadcrumbs = [
 		( <a href={ getLink( '/store/:site/', site ) }>{ translate( 'Settings' ) }</a> ),
 		( <span>{ translate( 'Email' ) }</span> ),
 	];
 
-	const	onSave = () => { };
-
 	return (
 		<Main className={ classNames( 'email', className ) }>
 			<ActionHeader breadcrumbs={ breadcrumbs }>
-				<Button
-					primary
-					onClick={ onSave }
-					busy={ isSaving }
-					disabled={ isSaving }>
-					{ translate( 'Save' ) }
-				</Button>
 			</ActionHeader>
 			<SettingsNavigation activeSection="email" />
 			<MailChimp siteId={ siteId } />

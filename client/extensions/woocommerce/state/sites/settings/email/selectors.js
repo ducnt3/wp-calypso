@@ -60,6 +60,19 @@ export const isSubbmittingApiKey = ( state, siteId ) => {
 	return get( state, path, false );
 };
 
+export const isSubmittingNewsletterSetting = ( state, siteId ) => {
+	const path =
+		[ 'extensions',
+			'woocommerce',
+			'sites',
+			siteId,
+			'settings',
+			'email',
+			'newsletterSettingsSubmit' ];
+
+	return get( state, path, false );
+};
+
 export const isApiKeyCorrect = ( state, siteId ) => {
 	const path =
 		[ 'extensions',
