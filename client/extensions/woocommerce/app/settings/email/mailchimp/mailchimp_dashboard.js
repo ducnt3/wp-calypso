@@ -24,7 +24,8 @@ import {
 	mailchimpSettings,
 	isRequestingSettings } from 'woocommerce/state/sites/settings/email/selectors';
 import { submitMailchimpNewsletterSettings } from 'woocommerce/state/sites/settings/email/actions.js';
-import { isSubmittingNewsletterSetting } from 'woocommerce/state/sites/settings/email/selectors';
+import { isSubmittingNewsletterSetting, newsletterSettingsSubmitError } from 'woocommerce/state/sites/settings/email/selectors';
+import { errorNotice, successNotice } from 'state/notices/actions';
 
 const SyncTab = localize( ( { translate, syncState, resync } ) => {
 	const { account_name, store_syncing, product_count, mailchimp_total_products,
@@ -151,6 +152,17 @@ class MailChimpDashboard extends React.Component {
 		};
 	}
 
+	componentWillReceiveProps( nextProps ) {
+		const { translate } = nextProps;
+		if ( ( nextProps.isSubmittingNewsletterSetting === false ) && this.props.isSubmittingNewsletterSetting ) {
+			if ( nextProps.newsletterSettingsSubmitError ) {
+				nextProps.errorNotice( translate( 'There was a problem saving the email settings. Please try again.' ) );
+			} else {
+				nextProps.successNotice( translate( 'Email settings saved.' ), { duration: 4000 } );
+			}
+		}
+	}
+
 	onSettingsChange = ( change ) => {
 		this.setState( { settings: Object.assign( {}, this.state.settings, change ) } );
 	}
@@ -214,9 +226,12 @@ export default connect(
 		syncStatusData: syncStatus( state, siteId ),
 		isRequestingSettings: isRequestingSettings( state, siteId ),
 		isSubmittingNewsletterSetting: isSubmittingNewsletterSetting( state, siteId ),
+		newsletterSettingsSubmitError: newsletterSettingsSubmitError( state, siteId ),
 		settings: mailchimpSettings( state, siteId ),
 	} ),
 	{
+		errorNotice,
+		successNotice,
 		submitMailchimpNewsletterSettings
 	}
 )( localize( MailChimpDashboard ) );
