@@ -9,12 +9,13 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { requestSyncStatus } from './actions';
-import { isRequestingSyncStatus } from './selectors';
+import { isRequestingSyncStatus, isRequestingResync as isResync } from './selectors';
 
 class QueryMailChimpSyncStatus extends Component {
 	static propTypes = {
 		siteId:	PropTypes.number.isRequired,
 		isRequesting: PropTypes.bool.isRequired,
+		isRequestingResync: PropTypes.bool.isRequired,
 		request: PropTypes.func.isRequired,
 	}
 
@@ -31,9 +32,10 @@ class QueryMailChimpSyncStatus extends Component {
 			return;
 		}
 
-		const { isRequesting } = this.props;
+		const { isRequesting, isRequestingResync } = this.props;
+		const activeRequest = isRequesting || isRequestingResync;
 
-		! isRequesting && this.triggerRequest( this.props );
+		! activeRequest && this.triggerRequest( this.props );
 		// Trigger once each minute
 		this.updateTimer = window.setInterval( () => {
 			this.triggerRequest( this.props );
@@ -63,6 +65,7 @@ export default connect(
 	( state, { siteId } ) => ( {
 		siteId,
 		isRequesting: isRequestingSyncStatus( state, siteId ),
+		isRequestingResync: isResync( state, siteId ),
 	} ),
 	{ request: requestSyncStatus }
 )( QueryMailChimpSyncStatus );

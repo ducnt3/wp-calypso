@@ -19,6 +19,9 @@ import {
 	WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST,
 	WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_SUCCESS,
 	WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_FAILURE,
+	WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST,
+	WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST_SUCCESS,
+	WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST_FAILURE,
 	WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT,
 	WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_SUCCESS,
 	WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_FAILURE
@@ -66,7 +69,8 @@ function settingsRequestError( state = false, action ) {
 function syncStatus( state = {}, action ) {
 	switch ( action.type ) {
 		case WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_SUCCESS:
-			return Object.assign( {}, state, action.syncStatus );
+		case WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST_SUCCESS:
+			return Object.assign( {}, action.syncStatus );
 	}
 
 	return state;
@@ -88,6 +92,29 @@ function syncStatusRequestError( state = false, action ) {
 		case WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_FAILURE:
 			const error = WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_FAILURE === action.type
+				? action.error : false;
+			return error;
+	}
+
+	return state;
+}
+
+function resyncRequest( state = false, { type } ) {
+	switch ( type ) {
+		case WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST:
+		case WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST_SUCCESS:
+		case WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST_FAILURE:
+			return WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST === type;
+	}
+
+	return state;
+}
+
+function resyncRequestError( state = false, action ) {
+	switch ( action.type ) {
+		case WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST_SUCCESS:
+		case WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST_FAILURE:
+			const error = WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST_FAILURE === action.type
 				? action.error : false;
 			return error;
 	}
@@ -203,6 +230,8 @@ export default combineReducers( {
 	syncStatus,
 	syncStatusRequest,
 	syncStatusRequestError,
+	resyncRequest,
+	resyncRequestError,
 	apiKeySubmit,
 	apiKeySubbmitError,
 	apiKeyCorrect,

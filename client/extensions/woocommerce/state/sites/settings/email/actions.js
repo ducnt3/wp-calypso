@@ -19,6 +19,9 @@ import {
 	WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST,
 	WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_SUCCESS,
 	WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_FAILURE,
+	WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST,
+	WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST_SUCCESS,
+	WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST_FAILURE,
 	WOOCOMMERCE_MAILCHIMP_CAMPAIGN_DEFAULTS_SUBMIT,
 	WOOCOMMERCE_MAILCHIMP_CAMPAIGN_DEFAULTS_SUBMIT_SUCCESS,
 	WOOCOMMERCE_MAILCHIMP_CAMPAIGN_DEFAULTS_SUBMIT_FAILURE,
@@ -125,6 +128,23 @@ const mailchimpSyncStatusRequestSuccess = ( siteId, syncStatus ) => ( {
 
 const mailchimpSyncStatusRequestFailure = ( siteId, { error } ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_FAILURE,
+	siteId,
+	error
+} );
+
+const mailchimpResyncRequest = ( siteId ) => ( {
+	type: WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST,
+	siteId
+} );
+
+const mailchimpResyncRequestSuccess = ( siteId, syncStatus ) => ( {
+	type: WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST_SUCCESS,
+	siteId,
+	syncStatus
+} );
+
+const mailchimpResyncRequestFailure = ( siteId, { error } ) => ( {
+	type: WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST_FAILURE,
 	siteId,
 	error
 } );
@@ -244,6 +264,22 @@ export const requestSyncStatus = ( siteId ) => ( dispatch, getState ) => {
 		} )
 		.catch( error => {
 			dispatch( mailchimpSyncStatusRequestFailure( siteId, error ) );
+		} );
+};
+
+export const requestResync = ( siteId ) => ( dispatch, getState ) => {
+	const state = getState();
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
+	dispatch( mailchimpResyncRequest( siteId ) );
+
+	return request( siteId ).put( 'mailchimp/sync' )
+		.then( sync_status => {
+			dispatch( mailchimpResyncRequestSuccess( siteId, sync_status ) );
+		} )
+		.catch( error => {
+			dispatch( mailchimpResyncRequestFailure( siteId, error ) );
 		} );
 };
 

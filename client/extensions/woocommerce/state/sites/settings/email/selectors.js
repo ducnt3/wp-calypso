@@ -137,3 +137,16 @@ export const isRequestingSyncStatus = ( state, siteId ) => {
 
 	return get( state, path, false );
 };
+
+export const isRequestingResync = ( state, siteId ) => {
+	const path =
+		[ 'extensions',
+			'woocommerce',
+			'sites',
+			siteId,
+			'settings',
+			'email',
+			'resyncRequest' ];
+
+	return get( state, path, false );
+};

@@ -23,11 +23,11 @@ import {
 	syncStatus,
 	mailchimpSettings,
 	isRequestingSettings } from 'woocommerce/state/sites/settings/email/selectors';
-import { submitMailchimpNewsletterSettings } from 'woocommerce/state/sites/settings/email/actions.js';
+import { submitMailchimpNewsletterSettings, requestResync } from 'woocommerce/state/sites/settings/email/actions.js';
 import { isSubmittingNewsletterSetting, newsletterSettingsSubmitError } from 'woocommerce/state/sites/settings/email/selectors';
 import { errorNotice, successNotice } from 'state/notices/actions';
 
-const SyncTab = localize( ( { translate, syncState, resync } ) => {
+const SyncTab = localize( ( { siteId, translate, syncState, resync } ) => {
 	const { account_name, store_syncing, product_count, mailchimp_total_products,
 		mailchimp_total_orders, order_count } = syncState;
 	const hasProductInfo = ( product_count !== undefined ) && ( mailchimp_total_products !== undefined );
@@ -53,6 +53,10 @@ const SyncTab = localize( ( { translate, syncState, resync } ) => {
 		</Notice>
 	);
 
+	const onResyncCLick = () => {
+		resync( siteId );
+	};
+
 	return (
 		<div>
 			<div>
@@ -60,7 +64,7 @@ const SyncTab = localize( ( { translate, syncState, resync } ) => {
 				<span>{ account_name }</span>
 			</div>
 			<span>{ store_syncing ? syncing() : synced() }</span>
-			<a onClick={ resync }>Resync</a>
+			<a onClick={ onResyncCLick }>Resync</a>
 			<div>
 				<span className="mailchimp__account-info" >{ translate( 'Products:' ) }</span>
 				<span>{ products }</span>
@@ -194,7 +198,10 @@ class MailChimpDashboard extends React.Component {
 							<div>{ slogan }</div>
 						</span>
 						<span className="mailchimp__dashboard-sync-status" >
-							<SyncTab syncState={ this.props.syncStatusData } />
+							<SyncTab
+								siteId={ this.props.siteId }
+								syncState={ this.props.syncStatusData }
+								resync={ this.props.requestResync } />
 						</span>
 					</div>
 					<div className="mailchimp__dashboard-second-section" >
@@ -232,6 +239,7 @@ export default connect(
 	{
 		errorNotice,
 		successNotice,
-		submitMailchimpNewsletterSettings
+		submitMailchimpNewsletterSettings,
+		requestResync
 	}
 )( localize( MailChimpDashboard ) );
