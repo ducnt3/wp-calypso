@@ -59,7 +59,7 @@ class MailChimpSetup extends React.Component {
 			step: LOG_INTO_MAILCHIMP_STEP,
 			settings: this.prepareDefaultValues( this.props.settings ),
 			settings_values_missing: false,
-			api_key_input: this.props.settings.mailchimp_api_key,
+			api_key_input: this.props.settings.mailchimp_api_key || '',
 		};
 	}
 
@@ -81,6 +81,7 @@ class MailChimpSetup extends React.Component {
 		if ( nextProps.settings.mailchimp_lists && ! this.state.settings.mailchimp_lists ) {
 			const newSettings = Object.assign( {}, this.state.settings );
 			newSettings.mailchimp_lists = nextProps.settings.mailchimp_lists;
+			newSettings.mailchimp_list = nextProps.settings.mailchimp_list;
 			this.setState( { settings: newSettings } );
 		}
 	}
@@ -119,10 +120,6 @@ class MailChimpSetup extends React.Component {
 		return pick( this.state.settings, campaignDefaultsRequiredFields );
 	}
 
-	getNewsletterSettings = () => {
-		return { mailchimp_list: get( this.state.settings, 'mailchimp_list', null ) };
-	}
-
 	hasEmptyValues = ( data ) => {
 		return some( data, isEmpty );
 	}
@@ -159,7 +156,6 @@ class MailChimpSetup extends React.Component {
 			return;
 		} else if ( this.state.step === STORE_INFO_STEP ) {
 			const settings = this.getStoreSettings();
-			console.log( settings );
 			const validSettings = this.areStoreSettingsValid( settings );
 			if ( ! validSettings ) {
 				this.setState( { settings_values_missing: true } );
@@ -180,13 +176,13 @@ class MailChimpSetup extends React.Component {
 			this.props.submitMailchimpCampaignDefaults( this.props.siteId, settings );
 			return;
 		} else if ( this.state.step === NEWSLETTER_SETTINGS_STEP ) {
-			const list_settings = this.getNewsletterSettings();
-			if ( ! list_settings ) {
+			const mailchimp_list = this.state.settings.mailchimp_list;
+			if ( ! mailchimp_list ) {
 				this.setState( { settings_values_missing: true } );
 				return;
 			}
 			this.setState( { settings_values_missing: false } );
-			this.props.submitMailchimpNewsletterSettings( this.props.siteId, list_settings );
+			this.props.submitMailchimpNewsletterSettings( this.props.siteId, { mailchimp_list } );
 			return;
 		}
 		this.setState( { step: steps[ this.state.step ].nextStep } );

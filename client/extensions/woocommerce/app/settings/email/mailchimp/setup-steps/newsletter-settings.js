@@ -16,7 +16,7 @@ import { isRequestingLists } from 'woocommerce/state/sites/settings/email/select
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { localize } from 'i18n-calypso';
 
-const NewsletterSettings = ( { storeData, onChange, validateFields, siteId, isRequesting, translate } ) => {
+const NewsletterSettings = ( { storeData, onChange, siteId, isRequesting, translate } ) => {
 	return (
 		<FormFieldset className="setup-steps__store-info-field">
 			<QueryMailChimpLists siteId={ siteId } />

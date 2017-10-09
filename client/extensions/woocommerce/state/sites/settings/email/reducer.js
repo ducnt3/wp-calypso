@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { keys } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { combineReducers } from 'state/utils';
@@ -27,6 +32,7 @@ import {
 	WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_FAILURE
 } from 'woocommerce/state/action-types';
 
+
 function settings( state = {}, action ) {
 	switch ( action.type ) {
 		case WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_SUCCESS:
@@ -37,7 +43,15 @@ function settings( state = {}, action ) {
 		case WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_SUCCESS:
 			return Object.assign( {}, state, action.settings );
 		case WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_SUCCESS:
-			return Object.assign( {}, state, { mailchimp_lists: action.lists } );
+			const data = { mailchimp_lists: action.lists };
+			const listKeys = keys( action.lists );
+			if ( ! state.mailchimp_list && ( listKeys.length > 0 ) ) {
+				// Just pick first that will be shown to the user in the dropdown
+				// We are setting mailchimp_list just in case user likes it and clicks
+				// Continue without actually sellecting something.
+				data.mailchimp_list = listKeys[ 0 ];
+			}
+			return Object.assign( {}, state, data );
 	}
 
 	return state;

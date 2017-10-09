@@ -30,18 +30,12 @@ class MailChimp extends React.Component {
 		};
 	}
 
-	onClick = () => {
-		console.log( 'click' );
-	}
-
 	startWizard = () => {
 		this.setState( { setupWizardStarted: true } );
-		console.log( 'start wizard' );
 	}
 
 	closeWizard = () => {
 		this.setState( { setupWizardStarted: false } );
-		console.log( 'close wizard' );
 	}
 
 	render() {
@@ -50,7 +44,6 @@ class MailChimp extends React.Component {
 		const { setupWizardStarted } = this.state;
 		const isRequestingData = ( isRequestingMailChimpSettings || isRequestingPlugins );
 		const mailChimpIsReady = ! isRequestingData && ( this.props.settings.active_tab === 'sync' );
-		console.log( this.props.sitePlugins );
 		return (
 			<div className={ className }>
 				<QueryJetpackPlugins siteIds={ [ siteId ] } />
@@ -71,9 +64,6 @@ class MailChimp extends React.Component {
 							activeTab={ this.state.activeTab }
 							onClose={ this.closeWizard } />
 				}
-				<Card>
-					{ 'Version: ' + this.props.version + ' ' + JSON.stringify( this.props.settings, null, 2 ) }
-				</Card>
 			</div>
 		);
 	}
