@@ -25,7 +25,9 @@ export default ( { storeData, onChange, validateFields } ) => {
 
 	return (
 		<div>
-			<div>Campaign default values</div>
+			<div className="setup-steps__campaign-defaults-title">
+				{ translate( 'Campaign default values' ) }
+			</div>
 			<FormFieldset className="setup-steps__campaign-defaults">
 				{ fields.map( ( item, index ) => (
 					<div key={ index }>

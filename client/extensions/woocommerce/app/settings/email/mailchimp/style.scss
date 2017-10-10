@@ -73,10 +73,18 @@
 	margin-bottom: 5px;
 }
 
+.setup-steps__campaign-defaults,
+.setup-steps__store-info-field,
 .setup-steps__mailchimp-key-input {
 	.form-text-input {
 		text-align: left;
 	}
+}
+
+.setup-steps__campaign-defaults-title {
+	font-size: 16px;
+	font-weight: 500;
+	margin-bottom: 10px;
 }
 
 .setup-steps__mailchimp-api-intro-notice {

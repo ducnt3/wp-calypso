@@ -136,7 +136,7 @@ const Settings = localize( ( { translate, settings, oldCheckbox, isRequesting, o
 				<div>{ translate( 'PREVIEW' ) }</div>
 				<div className="mailchimp__dashboard-settings-preview-view">
 					{toggle && <FormLabel>
-							<FormCheckbox checked={ checkbox === 'check' } />
+							<FormCheckbox checked={ checkbox === 'check' } disabled={ true } />
 							<span>{ settings.newsletter_label }</span>
 						</FormLabel>}
 				</div>
